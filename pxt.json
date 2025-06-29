@@ -1,11 +1,28 @@
 {
   "name": "hidkeyboard",
-  "description": "Send USB HID keypresses",
-  "dependencies": {},
+  "description": "Send USB HID keypresses from Micro:bit V2",
+  "version": "1.0.0",
+  "dependencies": {
+    "core": "*"
+  },
   "files": ["main.ts", "shims.d.ts"],
   "native": true,
   "yotta": {
-    "config": {},
-    "dependencies": {}
-  }
+    "config": {
+      "microbit-dal": {
+        "bluetooth": {
+          "enabled": 0
+        },
+        "usb": {
+          "enabled": 1
+        }
+      }
+    },
+    "dependencies": {
+      "microbit-dal": "lancaster-university/microbit-dal#v2.2.0-rc9"
+    }
+  },
+  "testFiles": [],
+  "public": true,
+  "license": "MIT"
 }
