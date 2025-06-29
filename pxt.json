@@ -1,0 +1,11 @@
+{
+  "name": "hidkeyboard",
+  "description": "Send USB HID keypresses",
+  "dependencies": {},
+  "files": ["main.ts", "shims.d.ts"],
+  "native": true,
+  "yotta": {
+    "config": {},
+    "dependencies": {}
+  }
+}
