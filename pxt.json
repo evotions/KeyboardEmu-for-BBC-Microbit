@@ -1,11 +1,11 @@
 {
   "name": "hidkeyboard",
-  "description": "Send USB HID keypresses from Micro:bit V2",
+  "description": "Send USB HID keypresses from Micro:bit V2 (based on pxt bleHID)",
   "version": "1.0.0",
   "dependencies": {
     "core": "*"
   },
-  "files": ["main.ts", "shims.d.ts"],
+  "files": ["main.ts", "shims.d.ts", "test.ts"],
   "native": true,
   "yotta": {
     "config": {
@@ -22,7 +22,7 @@
       "microbit-dal": "lancaster-university/microbit-dal#v2.2.0-rc9"
     }
   },
-  "testFiles": [],
+  "testFiles": ["test.ts"],
   "public": true,
   "license": "MIT"
 }

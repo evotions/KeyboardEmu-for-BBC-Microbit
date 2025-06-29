@@ -1,159 +1,153 @@
 //% weight=100 color=#0fbc11 icon="\uf11c"
 namespace HIDKeyboard
 {
-    //% block="press key %key"
-    //% key.defl="a"
-    export function keypress(key: string)
+    // Key Modifiers (matching the reference implementation)
+    class Modifier
     {
-        __HIDKeypress(key)
+        static readonly control = "\x01"
+        static readonly shift = "\x02"
+        static readonly alt = "\x03"
+        static readonly option = "\x03"
+        static readonly apple = "\x04"
+        static readonly windows = "\x04"
+        static readonly rightControl = "\x05"
+        static readonly rightShift = "\x06"
+        static readonly rightAlt = "\x07"
+        static readonly rightOption = "\x07"
+        static readonly rightApple = "\x08"
+        static readonly rightWindows = "\x08"
     }
 
-    //% block="type text %text"
-    //% text.defl="Hello World"
-    export function typeText(text: string)
+    // Special Keys (matching the reference implementation)
+    class Key
     {
-        for (let i = 0; i < text.length; i++) {
-            __HIDKeypress(text.charAt(i))
-            basic.pause(50) // Small delay between characters
+        static readonly enter = "\x10\x28"
+        static readonly escape = "\x10\x29"
+        static readonly delete = "\x10\x2A"
+        static readonly tab = "\x10\x2B"
+        static readonly up = "\x10\x52"
+        static readonly down = "\x10\x51"
+        static readonly left = "\x10\x50"
+        static readonly right = "\x10\x4f"
+        static readonly vol_up = "\x10\x80"
+        static readonly vol_down = "\x10\x81"
+    }
+
+    //% block="send keys %keys"
+    //% keys.defl="Hello World"
+    export function sendString(keys: string)
+    {
+        __HIDKeypress(keys)
+    }
+
+    //% block="send simultaneous keys %keys || hold keys %hold"
+    //% hold.defl=false
+    export function sendSimultaneousKeys(keys: string, hold: boolean)
+    {
+        __HIDKeypress(keys)
+        if (!hold) {
+            __HIDKeypress("") // Release keys
         }
     }
 
-    //% block="press special key %key"
-    //% key.defl="ENTER"
-    export function pressSpecialKey(key: SpecialKey)
+    //% block="release keys"
+    export function releaseKeys()
     {
-        __HIDKeypress(key)
+        __HIDKeypress("")
     }
 
-    //% block="press modifier key %key"
-    //% key.defl="CTRL"
-    export function pressModifierKey(key: ModifierKey)
+    //% block="raw scancode %code"
+    //% code.min=0 code.max=255
+    export function rawScancode(code: number)
     {
-        __HIDKeypress(key)
+        return "\x10" + String.fromCharCode(code)
     }
 
-    //% block="press key combination %modifier + %key"
-    //% modifier.defl="CTRL"
-    //% key.defl="c"
-    export function keyCombination(modifier: ModifierKey, key: string)
+    //% block="%key"
+    export function modifiers(key: _Modifier): string
     {
-        // First press modifier
-        __HIDKeypress(modifier)
-        basic.pause(10)
-        // Then press the key
-        __HIDKeypress(key)
-        basic.pause(10)
-        // Release modifier
-        __HIDKeypress(modifier)
+        let mods = [
+            Modifier.control,
+            Modifier.shift,
+            Modifier.alt,
+            Modifier.option,
+            Modifier.apple,
+            Modifier.windows,
+            Modifier.rightControl,
+            Modifier.rightShift,
+            Modifier.rightAlt,
+            Modifier.rightOption,
+            Modifier.rightApple,
+            Modifier.rightWindows
+        ]
+        if (key >= _Modifier.control && key <= _Modifier.rightWindows)
+            return mods[key];
+        return ""
     }
 
-    //% block="press arrow key %direction"
-    //% direction.defl="UP"
-    export function pressArrowKey(direction: ArrowKey)
+    //% block="%key"
+    export function keys(key: _Key): string
     {
-        __HIDKeypress(direction)
-    }
-
-    //% block="press function key %key"
-    //% key.defl="F1"
-    export function pressFunctionKey(key: FunctionKey)
-    {
-        __HIDKeypress(key)
+        let keys = [
+            Key.enter,
+            Key.escape,
+            Key.delete,
+            Key.tab,
+            Key.up,
+            Key.down,
+            Key.left,
+            Key.right,
+            Key.vol_up,
+            Key.vol_down
+        ]
+        if (key >= _Key.enter && key <= _Key.vol_down)
+            return keys[key];
+        return "";
     }
 }
 
 //% weight=90 color=#0fbc11
-enum SpecialKey
+enum _Modifier
 {
-    //% block="ENTER"
-    ENTER = "ENTER",
-    //% block="SPACE"
-    SPACE = "SPACE",
-    //% block="TAB"
-    TAB = "TAB",
-    //% block="BACKSPACE"
-    BACKSPACE = "BACKSPACE",
-    //% block="DELETE"
-    DELETE = "DELETE",
-    //% block="ESCAPE"
-    ESCAPE = "ESCAPE",
-    //% block="HOME"
-    HOME = "HOME",
-    //% block="END"
-    END = "END",
-    //% block="PAGE UP"
-    PAGEUP = "PAGEUP",
-    //% block="PAGE DOWN"
-    PAGEDOWN = "PAGEDOWN"
+    //% block="control+"
+    control,
+    //% block="shift+"
+    shift,
+    //% block="alt+"
+    alt,
+    //% block="option+"
+    option,
+    //% block="command+"
+    apple,
+    //% block="windows+"
+    windows,
+    //% block="right control+"
+    rightControl,
+    //% block="right shift+"
+    rightShift,
+    //% block="right alt+"
+    rightAlt,
+    //% block="right option+"
+    rightOption,
+    //% block="right apple+"
+    rightApple,
+    //% block="right windows+"
+    rightWindows,
 }
 
 //% weight=80 color=#0fbc11
-enum ModifierKey
+enum _Key
 {
-    //% block="CTRL"
-    CTRL = "CTRL",
-    //% block="SHIFT"
-    SHIFT = "SHIFT",
-    //% block="ALT"
-    ALT = "ALT",
-    //% block="GUI (Windows/Command)"
-    GUI = "GUI",
-    //% block="CTRL (Left)"
-    CTRL_L = "CTRL_L",
-    //% block="SHIFT (Left)"
-    SHIFT_L = "SHIFT_L",
-    //% block="ALT (Left)"
-    ALT_L = "ALT_L",
-    //% block="GUI (Left)"
-    GUI_L = "GUI_L",
-    //% block="CTRL (Right)"
-    CTRL_R = "CTRL_R",
-    //% block="SHIFT (Right)"
-    SHIFT_R = "SHIFT_R",
-    //% block="ALT (Right)"
-    ALT_R = "ALT_R",
-    //% block="GUI (Right)"
-    GUI_R = "GUI_R"
-}
-
-//% weight=70 color=#0fbc11
-enum ArrowKey
-{
-    //% block="UP"
-    UP = "UP",
-    //% block="DOWN"
-    DOWN = "DOWN",
-    //% block="LEFT"
-    LEFT = "LEFT",
-    //% block="RIGHT"
-    RIGHT = "RIGHT"
-}
-
-//% weight=60 color=#0fbc11
-enum FunctionKey
-{
-    //% block="F1"
-    F1 = "F1",
-    //% block="F2"
-    F2 = "F2",
-    //% block="F3"
-    F3 = "F3",
-    //% block="F4"
-    F4 = "F4",
-    //% block="F5"
-    F5 = "F5",
-    //% block="F6"
-    F6 = "F6",
-    //% block="F7"
-    F7 = "F7",
-    //% block="F8"
-    F8 = "F8",
-    //% block="F9"
-    F9 = "F9",
-    //% block="F10"
-    F10 = "F10",
-    //% block="F11"
-    F11 = "F11",
-    //% block="F12"
-    F12 = "F12"
+    enter,
+    escape,
+    delete,
+    tab,
+    up,
+    down,
+    left,
+    right,
+    //% block="volume up"
+    vol_up,
+    //% block="volume down"
+    vol_down,
 }
