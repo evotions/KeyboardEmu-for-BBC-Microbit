@@ -33,6 +33,25 @@ MBV2_KeyboardHID/
 
 ## 🚀 Quick Start Guide
 
+```mermaid
+flowchart TD
+    A["🚀 Start"] --> B["📦 Install Python Dependencies<br/>pip install pyserial pynput"]
+    B --> C["🔌 Connect micro:bit via USB"]
+    C --> D["🌐 Open MakeCode Editor"]
+    D --> E["📋 Import Serial HID Extension"]
+    E --> F["🎯 Create Your Program<br/>serialHID.initialize()<br/>serialKeyboard.sendString()"]
+    F --> G["📱 Upload to micro:bit"]
+    G --> H["🐍 Run Python Bridge<br/>python microbit_hid_bridge.py"]
+    H --> I["🎮 Test HID Control"]
+    I --> J["✅ Success!<br/>micro:bit controls computer"]
+    
+    subgraph "Troubleshooting"
+    K["❌ Port not found"] --> L["🔍 List ports<br/>--list-ports"]
+    M["❌ Permission denied"] --> N["👑 Run as admin<br/>or grant accessibility"]
+    O["❌ Nothing happens"] --> P["🐛 Enable debug mode<br/>--debug"]
+    end
+```
+
 ### Step 1: Set Up Python Environment
 
 **Option A: Auto-Install (Recommended)**
@@ -106,13 +125,27 @@ input.onButtonPressed(Button.B, function () {
 
 ## 📡 How It Works
 
-```
-┌─────────────┐    USB Serial    ┌─────────────────┐    System APIs    ┌──────────────┐
-│  micro:bit  │ ────────────────► │ Python Bridge   │ ─────────────────► │   Computer   │
-│             │  HID:KEY:Hello   │                 │  Keyboard/Mouse   │              │
-│ MakeCode    │  HID:MOUSE:10,5  │ Serial Parser   │  Input Events     │ Applications │
-│ Extension   │  HID:CLICK:LEFT  │ HID Controller  │                   │              │
-└─────────────┘                  └─────────────────┘                   └──────────────┘
+```mermaid
+graph TB
+    A["micro:bit v2<br/>MakeCode Extension"] --> B["USB Serial<br/>115200 baud"]
+    B --> C["Python Bridge<br/>Serial Parser"]
+    C --> D["pynput Library<br/>HID Controller"]
+    D --> E["Operating System<br/>Input Events"]
+    E --> F["Applications<br/>Games, Browsers, etc."]
+    
+    subgraph "Serial Commands"
+    G["HID:KEY:Hello"]
+    H["HID:MOUSE:MOVE:10,5"]
+    I["HID:COMBO:CTRL+C"]
+    end
+    
+    A -.-> G
+    A -.-> H  
+    A -.-> I
+    
+    G --> C
+    H --> C
+    I --> C
 ```
 
 ### Protocol Details
@@ -128,6 +161,30 @@ HID:TYPE:ACTION:DATA
 - `HID:COMBO:CTRL+C` - Press Ctrl+C
 - `HID:MOUSE:MOVE:10,5` - Move mouse
 - `HID:MOUSE:CLICK:LEFT` - Left click
+
+```mermaid
+graph LR
+    subgraph "Keyboard Commands"
+    A["HID:KEY:Hello World"] --> A1["Type Text"]
+    B["HID:SPECIAL:ENTER"] --> B1["Press Enter"]
+    C["HID:COMBO:CTRL+C"] --> C1["Ctrl+C Combo"]
+    D["HID:HOLD:SHIFT+A"] --> D1["Hold Shift+A"]
+    E["HID:RELEASE"] --> E1["Release All Keys"]
+    end
+    
+    subgraph "Mouse Commands"
+    F["HID:MOUSE:MOVE:10,5"] --> F1["Move Cursor"]
+    G["HID:MOUSE:CLICK:LEFT"] --> G1["Left Click"]
+    H["HID:MOUSE:SCROLL:3"] --> H1["Scroll Up"]
+    I["HID:MOUSE:HOLD:RIGHT"] --> I1["Hold Right Button"]
+    J["HID:MOUSE:RELEASE:ALL"] --> J1["Release All Buttons"]
+    end
+    
+    subgraph "System Commands"
+    K["HID:PING"] --> K1["Connection Test"]
+    L["HID:INIT:SYSTEM"] --> L1["Initialize Bridge"]
+    end
+```
 
 ## 🛠️ Available Functions
 
