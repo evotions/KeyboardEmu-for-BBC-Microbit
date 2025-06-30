@@ -14,12 +14,12 @@ Turn your **micro:bit v2** into a wired keyboard and mouse controller! This proj
 
 ```
 MBV2_KeyboardHID/
-├── SerialHID_Extension/          # MakeCode extension for micro:bit
-│   ├── pxt.json                  # Extension configuration
-│   ├── keyboard.ts               # Keyboard functionality
-│   ├── mouse.ts                  # Mouse functionality
-│   ├── main.ts                   # Main HID system
-│   └── README.md                 # Extension documentation
+├── pxt.json                      # MakeCode extension configuration
+├── main.ts                       # Main HID system
+├── keyboard.ts                   # Keyboard functionality  
+├── mouse.ts                      # Mouse functionality
+├── test.ts                       # Extension test file
+├── Extension_README.md           # Extension documentation
 ├── Python_HID_Bridge/            # Python companion application
 │   ├── microbit_hid_bridge.py   # Main bridge script
 │   ├── install_and_run.py       # Auto-installer
@@ -28,6 +28,7 @@ MBV2_KeyboardHID/
 ├── DEMO_Examples/                # Example code and demos
 │   ├── basic_test.py             # Test without micro:bit
 │   └── microbit_demo_program.py  # MakeCode example programs
+├── Reference_Plugin/             # Original Bluetooth HID reference
 └── README.md                     # This file
 ```
 
