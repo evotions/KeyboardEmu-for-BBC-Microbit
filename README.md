@@ -51,9 +51,9 @@ input.onButtonPressed(Button.B, function () {
 
 ```mermaid
 graph TD
-    A["micro:bit v2<br/>MakeCode Program"] --> B["USB Serial Cable<br/>9600 baud"]
-    B --> C["Python HID Bridge<br/>Command Parser"]
-    C --> D["System Keyboard/Mouse<br/>Input Events"]
+    A("micro:bit v2<br/>MakeCode Program") --> B("USB Serial Cable<br/>9600 baud")
+    B --> C("Python HID Bridge<br/>Command Parser")
+    C --> D("System Keyboard/Mouse<br/>Input Events")
     
     style A fill:#0084ff,stroke:#fff,stroke-width:2px,color:#fff
     style B fill:#28a745,stroke:#fff,stroke-width:2px,color:#fff
