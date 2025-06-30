@@ -199,6 +199,7 @@ class MicrobitHIDBridge:
         try:
             if action == "KEY":
                 # Send text string
+                self.log(f"Typing text: '{data}' (length: {len(data)})")
                 self.keyboard_controller.type(data)
                 
             elif action == "SPECIAL":
@@ -255,16 +256,22 @@ class MicrobitHIDBridge:
         """Handle mouse-related commands"""
         try:
             if action == "MOVE":
-                # Move mouse relatively
-                x, y = map(int, data.split(","))
+                # Move mouse relatively - handle decimal numbers from MakeCode
+                x, y = map(float, data.split(","))
+                x, y = int(round(x)), int(round(y))  # Round to nearest integer
                 current_x, current_y = self.mouse_controller.position
-                self.mouse_controller.position = (current_x + x, current_y + y)
+                new_x, new_y = current_x + x, current_y + y
+                self.log(f"Mouse MOVE: ({x},{y}) -> from ({current_x},{current_y}) to ({new_x},{new_y})")
+                self.mouse_controller.position = (new_x, new_y)
                 
             elif action == "CLICK":
                 # Single click
                 button = self.mouse_buttons.get(data.upper())
                 if button:
+                    self.log(f"Mouse CLICK: {data.upper()} button")
                     self.mouse_controller.click(button)
+                else:
+                    self.log(f"Unknown mouse button: {data.upper()}")
                     
             elif action == "DOUBLE_CLICK":
                 # Double click
@@ -311,18 +318,18 @@ class MicrobitHIDBridge:
     def process_command(self, command: Dict[str, Any]) -> None:
         """Process a parsed HID command"""
         cmd_type = command['type'].upper()
-        action = command['action'].upper()
+        action = command['action']  # DON'T uppercase the action - preserve case!
         data = command['data']
         
-        if cmd_type in ['INIT', 'KEYBOARD']:
-            if action != 'INIT':
-                self.handle_keyboard_command(action, data)
+        # Keyboard commands: HID:KEY:text, HID:SPECIAL:ENTER, HID:COMBO:CTRL+C
+        if cmd_type in ['KEY', 'SPECIAL', 'COMBO']:
+            self.handle_keyboard_command(cmd_type, action)
                 
         elif cmd_type == 'MOUSE':
-            self.handle_mouse_command(action, data)
+            self.handle_mouse_command(action.upper(), data)
             
-        elif cmd_type in ['SYSTEM', 'PING']:
-            self.handle_system_command(action, data)
+        elif cmd_type in ['INIT', 'SYSTEM', 'PING']:
+            self.handle_system_command(action.upper(), data)
 
     def run(self) -> None:
         """Main loop to read serial and process commands"""
