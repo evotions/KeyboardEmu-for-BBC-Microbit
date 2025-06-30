@@ -7,89 +7,119 @@ namespace serialKeyboard
     let initialized = false;
 
     /**
-     * Initialize the serial keyboard service
-     * Sets up serial communication for HID commands
+     * Initialize the keyboard service (deprecated - use serialHID.initialize() instead)
      */
     //% blockId="serial_keyboard_start" block="start serial keyboard"
     //% weight=100
     export function startKeyboardService(): void
     {
         if (!initialized) {
-            serial.setBaudRate(BaudRate.BaudRate115200);
+            serialHID.initialize();
             initialized = true;
-            serial.writeLine("HID:INIT:KEYBOARD");
         }
     }
 
     /**
-     * Send a string of text
-     * @param text the text to send
+     * Type text on the connected computer
+     * @param text the text to type
      */
-    //% blockId="send_string" block="send keys %text" 
+    //% block="type text %text"
+    //% weight=100
+    export function typeText(text: string): void
+    {
+        serialHID.sendCommand("HID:KEY:" + text);
+    }
+
+    /**
+     * Press a special key (like Enter, Space, Tab)
+     * @param key the special key to press
+     */
+    //% block="press key %key"
     //% weight=90
-    export function sendString(text: string): void
+    export function pressKey(key: string): void
     {
-        // Ensure main system is initialized
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200); // Shorter wait since 9600 baud is more stable
-        }
-        basic.pause(10); // Much shorter delay
-        serial.writeLine("HID:KEY:" + text);
-        basic.pause(10); // Short wait after sending
+        serialHID.sendCommand("HID:SPECIAL:" + key);
     }
 
     /**
-     * Send special keys and modifiers
-     * @param keys the keys to send (use Key and Modifier helpers)
+     * Press a key combination (like Ctrl+C, Alt+Tab)
+     * @param combo the key combination to press (e.g., "CTRL+C")
      */
-    //% blockId="send_special_keys" block="send special keys %keys"
+    //% block="press keys %combo"
     //% weight=80
-    export function sendSpecialKeys(keys: string): void
+    export function pressCombo(combo: string): void
     {
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200);
-        }
-        basic.pause(10);
-        serial.writeLine("HID:SPECIAL:" + keys);
+        serialHID.sendCommand("HID:COMBO:" + combo);
     }
 
     /**
-     * Send simultaneous key combination
-     * @param keys the key combination to send
-     * @param hold whether to hold the keys down
+     * Press Enter key
      */
-    //% blockId="send_key_combo" block="send key combo %keys || hold %hold"
-    //% hold.default=false
+    //% block="press Enter"
     //% weight=70
-    export function sendKeyCombo(keys: string, hold: boolean = false): void
+    export function pressEnter(): void
     {
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200);
-        }
-        basic.pause(10);
-        if (hold) {
-            serial.writeLine("HID:HOLD:" + keys);
-        } else {
-            serial.writeLine("HID:COMBO:" + keys);
-        }
+        pressKey("ENTER");
     }
 
     /**
-     * Release all held keys
+     * Press Space key
      */
-    //% blockId="release_keys" block="release all keys"
+    //% block="press Space"
     //% weight=60
-    export function releaseKeys(): void
+    export function pressSpace(): void
     {
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200);
-        }
-        basic.pause(10);
-        serial.writeLine("HID:RELEASE");
+        pressKey("SPACE");
+    }
+
+    /**
+     * Press Tab key
+     */
+    //% block="press Tab"
+    //% weight=50
+    export function pressTab(): void
+    {
+        pressKey("TAB");
+    }
+
+    /**
+     * Press Escape key
+     */
+    //% block="press Escape"
+    //% weight=40
+    export function pressEscape(): void
+    {
+        pressKey("ESCAPE");
+    }
+
+    /**
+     * Copy selected text (Ctrl+C)
+     */
+    //% block="copy"
+    //% weight=30
+    export function copy(): void
+    {
+        pressCombo("CTRL+C");
+    }
+
+    /**
+     * Paste from clipboard (Ctrl+V)
+     */
+    //% block="paste"
+    //% weight=20
+    export function paste(): void
+    {
+        pressCombo("CTRL+V");
+    }
+
+    /**
+     * Cut selected text (Ctrl+X)
+     */
+    //% block="cut"
+    //% weight=10
+    export function cut(): void
+    {
+        pressCombo("CTRL+X");
     }
 
     // Key modifiers

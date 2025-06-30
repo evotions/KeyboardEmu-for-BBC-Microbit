@@ -7,146 +7,127 @@ namespace serialMouse
     let initialized = false;
 
     /**
-     * Initialize the serial mouse service
-     * Sets up serial communication for mouse HID commands
+     * Initialize the mouse service (deprecated - use serialHID.initialize() instead)
      */
     //% blockId="serial_mouse_start" block="start serial mouse"
     //% weight=100
     export function startMouseService(): void
     {
         if (!initialized) {
-            serial.setBaudRate(BaudRate.BaudRate115200);
+            serialHID.initialize();
             initialized = true;
-            serial.writeLine("HID:INIT:MOUSE");
         }
     }
 
     /**
-     * Move mouse cursor by relative amounts
-     * @param x horizontal movement (-127 to 127)
-     * @param y vertical movement (-127 to 127)
+     * Move the mouse cursor
+     * @param x horizontal movement (negative = left, positive = right)
+     * @param y vertical movement (negative = up, positive = down)
      */
-    //% blockId="move_mouse" block="move mouse x %x y %y"
-    //% x.min=-127 x.max=127 y.min=-127 y.max=127
-    //% weight=90
-    export function move(x: number, y: number): void
+    //% block="move mouse x %x y %y"
+    //% weight=100
+    //% x.min=-127 x.max=127
+    //% y.min=-127 y.max=127
+    export function moveMouse(x: number, y: number): void
     {
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200);
-        }
-        basic.pause(10);
-        serial.writeLine(`HID:MOUSE:MOVE:${x},${y}`);
-        basic.pause(10);
+        serialHID.sendCommand("HID:MOUSE:MOVE:" + x + "," + y);
+    }
+
+    /**
+     * Click a mouse button
+     * @param button which button to click
+     */
+    //% block="click mouse %button"
+    //% weight=90
+    export function clickMouse(button: string): void
+    {
+        serialHID.sendCommand("HID:MOUSE:CLICK:" + button);
+    }
+
+    /**
+     * Press and hold a mouse button
+     * @param button which button to press
+     */
+    //% block="press mouse %button"
+    //% weight=80
+    export function pressMouse(button: string): void
+    {
+        serialHID.sendCommand("HID:MOUSE:PRESS:" + button);
+    }
+
+    /**
+     * Release a mouse button
+     * @param button which button to release
+     */
+    //% block="release mouse %button"
+    //% weight=70
+    export function releaseMouse(button: string): void
+    {
+        serialHID.sendCommand("HID:MOUSE:RELEASE:" + button);
+    }
+
+    /**
+     * Scroll the mouse wheel
+     * @param amount scroll amount (negative = up, positive = down)
+     */
+    //% block="scroll mouse %amount"
+    //% weight=60
+    //% amount.min=-10 amount.max=10
+    export function scrollMouse(amount: number): void
+    {
+        serialHID.sendCommand("HID:MOUSE:SCROLL:" + amount);
     }
 
     /**
      * Left click
      */
-    //% blockId="mouse_left_click" block="left click"
-    //% weight=80
+    //% block="left click"
+    //% weight=50
     export function leftClick(): void
     {
-        if (!serialHID.isInitialized()) {
-            serialHID.initialize();
-            basic.pause(200);
-        }
-        basic.pause(10);
-        serial.writeLine("HID:MOUSE:CLICK:LEFT");
-        basic.pause(10);
+        clickMouse("LEFT");
     }
 
     /**
      * Right click
      */
-    //% blockId="mouse_right_click" block="right click"
-    //% weight=70
+    //% block="right click"
+    //% weight=40
     export function rightClick(): void
     {
-        if (!initialized) startMouseService();
-        serial.writeLine("HID:MOUSE:CLICK:RIGHT");
+        clickMouse("RIGHT");
     }
 
     /**
      * Middle click
      */
-    //% blockId="mouse_middle_click" block="middle click"
-    //% weight=60
+    //% block="middle click"
+    //% weight=30
     export function middleClick(): void
     {
-        if (!initialized) startMouseService();
-        serial.writeLine("HID:MOUSE:CLICK:MIDDLE");
+        clickMouse("MIDDLE");
     }
 
     /**
      * Double click
      */
-    //% blockId="mouse_double_click" block="double click"
-    //% weight=50
+    //% block="double click"
+    //% weight=20
     export function doubleClick(): void
     {
-        if (!initialized) startMouseService();
-        serial.writeLine("HID:MOUSE:DOUBLE_CLICK");
-    }
-
-    /**
-     * Scroll wheel
-     * @param scroll scroll amount (-127 to 127, positive = up)
-     */
-    //% blockId="mouse_scroll" block="scroll %scroll"
-    //% scroll.min=-127 scroll.max=127
-    //% weight=40
-    export function scroll(scroll: number): void
-    {
-        if (!initialized) startMouseService();
-        serial.writeLine(`HID:MOUSE:SCROLL:${scroll}`);
-    }
-
-    /**
-     * Hold mouse button down
-     * @param button which button to hold
-     */
-    //% blockId="mouse_hold" block="hold %button button"
-    //% weight=30
-    export function holdButton(button: MouseButton): void
-    {
-        if (!initialized) startMouseService();
-        let buttonName = "";
-        switch (button) {
-            case MouseButton.Left: buttonName = "LEFT"; break;
-            case MouseButton.Right: buttonName = "RIGHT"; break;
-            case MouseButton.Middle: buttonName = "MIDDLE"; break;
-        }
-        serial.writeLine(`HID:MOUSE:HOLD:${buttonName}`);
-    }
-
-    /**
-     * Release mouse button
-     * @param button which button to release
-     */
-    //% blockId="mouse_release" block="release %button button"
-    //% weight=20
-    export function releaseButton(button: MouseButton): void
-    {
-        if (!initialized) startMouseService();
-        let buttonName = "";
-        switch (button) {
-            case MouseButton.Left: buttonName = "LEFT"; break;
-            case MouseButton.Right: buttonName = "RIGHT"; break;
-            case MouseButton.Middle: buttonName = "MIDDLE"; break;
-        }
-        serial.writeLine(`HID:MOUSE:RELEASE:${buttonName}`);
+        leftClick();
+        basic.pause(50);
+        leftClick();
     }
 
     /**
      * Release all mouse buttons
      */
-    //% blockId="mouse_release_all" block="release all mouse buttons"
+    //% block="release all mouse buttons"
     //% weight=10
     export function releaseAll(): void
     {
-        if (!initialized) startMouseService();
-        serial.writeLine("HID:MOUSE:RELEASE:ALL");
+        serialHID.sendCommand("HID:MOUSE:RELEASE:ALL");
     }
 
     export enum MouseButton

@@ -7,9 +7,7 @@
  * Requires companion Python script running on the host computer.
  */
 
-//% color=#FF6600
-//% icon="\uf287"
-//% block="SerialHID"
+//% weight=100 color=#0fbc11 icon="\uf11c"
 namespace serialHID
 {
 
@@ -17,20 +15,24 @@ namespace serialHID
 
     /**
      * Initialize the Serial HID system
-     * Call this before using keyboard or mouse functions
+     * Call this once at the start of your program
      */
-    //% blockId="serial_hid_init" block="initialize Serial HID"
+    //% block="initialize serial HID system"
     //% weight=100
     export function initialize(): void
     {
         if (!initialized) {
-            // Set lower, more reliable baud rate
+            // Set baud rate to 9600 for maximum reliability
             serial.setBaudRate(BaudRate.BaudRate9600);
-            basic.pause(500); // Still give time to stabilize
+
+            // Set write line padding to 0 to prevent extra spaces
+            serial.setWriteLinePadding(0);
 
             // Send initialization command
             serial.writeLine("HID:INIT:SYSTEM");
-            basic.pause(100);
+
+            // Wait for system to stabilize
+            basic.pause(200);
 
             initialized = true;
         }
@@ -48,15 +50,32 @@ namespace serialHID
     }
 
     /**
-     * Send a status ping to check if the Python script is running
+     * Send a raw HID command
+     * @param command the HID command to send
      */
-    //% blockId="serial_hid_ping" block="ping HID system"
-    //% weight=20
+    //% block="send HID command %command"
+    //% weight=90
+    export function sendCommand(command: string): void
+    {
+        if (!initialized) {
+            initialize();
+        }
+
+        // Send the command with proper line termination
+        serial.writeLine(command);
+
+        // Small delay to prevent buffer overflow
+        basic.pause(10);
+    }
+
+    /**
+     * Send a ping to test the connection
+     */
+    //% block="ping HID bridge"
+    //% weight=80
     export function ping(): void
     {
-        if (!initialized) initialize();
-        basic.pause(10);
-        serial.writeLine("HID:PING");
+        sendCommand("HID:PING");
     }
 
     /**

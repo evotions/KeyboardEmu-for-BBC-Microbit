@@ -346,6 +346,27 @@ MIT License - Use freely for personal and commercial projects!
 - [micro:bit Hardware Guide](https://tech.microbit.org/hardware/)
 - [Serial Communication Tutorial](https://www.arduino.cc/reference/en/language/functions/communication/serial/)
 
+## 🚨 IMPORTANT: Fix Serial Corruption Issues
+
+If you're experiencing **fragmented or corrupted serial commands** (like `HI:KEY:b` instead of `HID:KEY:b`), this is caused by **MakeCode's WebUSB connection interfering** with your Python bridge.
+
+### The Fix:
+1. **Close all MakeCode browser tabs** after flashing your program
+2. OR use the **three-dot menu** on the "Download" button and select **"Disconnect"**
+3. **Never run multiple MakeCode tabs** simultaneously
+4. **Ensure only your Python bridge** is connected to the COM port
+
+### Why This Happens:
+When MakeCode uses WebUSB to flash programs, it stays connected and "steals" some serial data meant for your Python bridge, causing fragmentation.
+
+## 🛠 Technical Improvements (v2.0)
+
+- **Reduced baud rate** from 115200 to **9600** for maximum reliability
+- **Eliminated write line padding** to prevent extra spaces
+- **Centralized command sending** through `serialHID.sendCommand()`
+- **Proper delays** to prevent buffer overflow
+- **Cross-platform port detection** in Python bridge
+
 ---
 
 **Happy Coding! 🎉** Transform your micro:bit into a powerful HID controller! 
