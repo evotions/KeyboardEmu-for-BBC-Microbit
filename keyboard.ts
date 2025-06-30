@@ -29,7 +29,12 @@ namespace serialKeyboard
     //% weight=90
     export function sendString(text: string): void
     {
-        if (!initialized) startKeyboardService();
+        // Ensure main system is initialized
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200); // Wait for initialization
+        }
+        basic.pause(10); // Small delay before sending
         serial.writeLine("HID:KEY:" + text);
     }
 
@@ -41,7 +46,11 @@ namespace serialKeyboard
     //% weight=80
     export function sendSpecialKeys(keys: string): void
     {
-        if (!initialized) startKeyboardService();
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200);
+        }
+        basic.pause(10);
         serial.writeLine("HID:SPECIAL:" + keys);
     }
 
@@ -55,7 +64,11 @@ namespace serialKeyboard
     //% weight=70
     export function sendKeyCombo(keys: string, hold: boolean = false): void
     {
-        if (!initialized) startKeyboardService();
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200);
+        }
+        basic.pause(10);
         if (hold) {
             serial.writeLine("HID:HOLD:" + keys);
         } else {
@@ -70,7 +83,11 @@ namespace serialKeyboard
     //% weight=60
     export function releaseKeys(): void
     {
-        if (!initialized) startKeyboardService();
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200);
+        }
+        basic.pause(10);
         serial.writeLine("HID:RELEASE");
     }
 

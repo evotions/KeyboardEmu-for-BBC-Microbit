@@ -24,10 +24,15 @@ namespace serialHID
     export function initialize(): void
     {
         if (!initialized) {
+            // Set baud rate first
             serial.setBaudRate(BaudRate.BaudRate115200);
-            initialized = true;
+            basic.pause(500); // Wait for serial to stabilize
+
+            // Send initialization command
             serial.writeLine("HID:INIT:SYSTEM");
-            basic.pause(100); // Give time for initialization
+            basic.pause(100);
+
+            initialized = true;
         }
     }
 
@@ -50,6 +55,7 @@ namespace serialHID
     export function ping(): void
     {
         if (!initialized) initialize();
+        basic.pause(10);
         serial.writeLine("HID:PING");
     }
 
