@@ -8,16 +8,16 @@
     },
     "files": [
         "README.md",
+        "main.ts",
         "keyboard.ts",
-        "mouse.ts",
-        "main.ts"
+        "mouse.ts"
     ],
     "testFiles": [
         "test.ts"
     ],
     "public": true,
     "targetVersions": {
-        "target": "6.0.26",
+        "target": "6.0.18",
         "targetId": "microbit"
     },
     "supportedTargets": [
@@ -28,8 +28,9 @@
         "SerialHID Extension"
     ],
     "card": {
-        "name": "Serial HID - Keyboard & Mouse",
+        "name": "Serial HID",
         "description": "Control keyboard and mouse via USB serial connection",
         "imageUrl": "https://makecode.microbit.org/static/mb/projects/a4-motion.png"
-    }
+    },
+    "installedVersion": "workspace:*"
 } 
