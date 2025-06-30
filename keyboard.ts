@@ -32,10 +32,11 @@ namespace serialKeyboard
         // Ensure main system is initialized
         if (!serialHID.isInitialized()) {
             serialHID.initialize();
-            basic.pause(200); // Wait for initialization
+            basic.pause(500); // Longer wait for initialization
         }
-        basic.pause(10); // Small delay before sending
+        basic.pause(50); // Longer delay before sending
         serial.writeLine("HID:KEY:" + text);
+        basic.pause(50); // Wait after sending
     }
 
     /**

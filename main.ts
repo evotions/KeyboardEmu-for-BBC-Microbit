@@ -26,11 +26,11 @@ namespace serialHID
         if (!initialized) {
             // Set baud rate first
             serial.setBaudRate(BaudRate.BaudRate115200);
-            basic.pause(500); // Wait for serial to stabilize
+            basic.pause(1000); // Much longer wait for serial to stabilize
 
             // Send initialization command
             serial.writeLine("HID:INIT:SYSTEM");
-            basic.pause(100);
+            basic.pause(200); // Longer pause after init
 
             initialized = true;
         }
