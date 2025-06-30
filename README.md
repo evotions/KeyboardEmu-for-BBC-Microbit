@@ -47,14 +47,23 @@ input.onButtonPressed(Button.B, function () {
 
 ## How It Works
 
+<div align="center">
+
 ```mermaid
-graph LR
-    A[micro:bit] --> B[USB Serial]
-    B --> C[Python Bridge]
-    C --> D[System Input]
+graph TD
+    A["micro:bit v2<br/>MakeCode Program"] --> B["USB Serial Cable<br/>9600 baud"]
+    B --> C["Python HID Bridge<br/>Command Parser"]
+    C --> D["System Keyboard/Mouse<br/>Input Events"]
+    
+    style A fill:#0084ff,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#28a745,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#ffc107,stroke:#000,stroke-width:2px,color:#000
+    style D fill:#dc3545,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
 Your micro:bit sends commands like `HID:KEY:Hello` over serial. The Python bridge converts these to actual keyboard/mouse input.
+
+</div>
 
 ## Protocol Commands
 
