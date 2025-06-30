@@ -1,0 +1,35 @@
+{
+    "name": "microbit-serial-hid",
+    "version": "1.0.0",
+    "description": "Serial-based HID support for micro:bit - Keyboard and Mouse over USB serial",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "keyboard.ts",
+        "mouse.ts",
+        "main.ts"
+    ],
+    "testFiles": [
+        "test.ts"
+    ],
+    "public": true,
+    "targetVersions": {
+        "target": "6.0.26",
+        "targetId": "microbit"
+    },
+    "supportedTargets": [
+        "microbit"
+    ],
+    "preferredEditor": "tsprj",
+    "authors": [
+        "SerialHID Extension"
+    ],
+    "card": {
+        "name": "Serial HID - Keyboard & Mouse",
+        "description": "Control keyboard and mouse via USB serial connection",
+        "imageUrl": "https://makecode.microbit.org/static/mb/projects/a4-motion.png"
+    }
+} 
