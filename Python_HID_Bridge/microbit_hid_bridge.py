@@ -158,7 +158,7 @@ class MicrobitHIDBridge:
         try:
             self.serial_conn = serial.Serial(
                 self.port,
-                baudrate=115200,
+                baudrate=9600,  # Match micro:bit's slower, more reliable rate
                 timeout=1.0,
                 write_timeout=1.0
             )
@@ -166,7 +166,7 @@ class MicrobitHIDBridge:
             # Wait for connection to stabilize
             time.sleep(2)
             
-            print(f"✅ Connected to micro:bit on {self.port}")
+            print(f"✅ Connected to micro:bit on {self.port} (9600 baud)")
             return True
             
         except serial.SerialException as e:

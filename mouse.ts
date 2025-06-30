@@ -31,8 +31,13 @@ namespace serialMouse
     //% weight=90
     export function move(x: number, y: number): void
     {
-        if (!initialized) startMouseService();
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200);
+        }
+        basic.pause(10);
         serial.writeLine(`HID:MOUSE:MOVE:${x},${y}`);
+        basic.pause(10);
     }
 
     /**
@@ -42,8 +47,13 @@ namespace serialMouse
     //% weight=80
     export function leftClick(): void
     {
-        if (!initialized) startMouseService();
+        if (!serialHID.isInitialized()) {
+            serialHID.initialize();
+            basic.pause(200);
+        }
+        basic.pause(10);
         serial.writeLine("HID:MOUSE:CLICK:LEFT");
+        basic.pause(10);
     }
 
     /**
