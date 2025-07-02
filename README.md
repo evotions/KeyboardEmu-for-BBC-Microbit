@@ -221,17 +221,6 @@ Check the `Microbit_Examples/README.md` for complete instructions and code for t
 
 **Raspberry Pi** makes an excellent dedicated bridge device, allowing you to control other computers over the network or create standalone kiosk systems.
 
-## Example Project Ideas
-
-**Accessibility Controller** - Create custom input devices for users with mobility limitations using the micro:bit's sensors and buttons.
-
-**Gaming Controller** - Use accelerometer tilting for mouse control and buttons for keyboard shortcuts in your favorite games.
-
-**Presentation Remote** - Control slideshow presentations wirelessly using micro:bit buttons to advance slides and a laser pointer function.
-
-**Home Automation Interface** - Control smart home devices by sending keyboard shortcuts to control applications.
-
-**Educational Tools** - Teach programming concepts by creating physical controllers that interact with educational software.
 
 ## Security and Safety
 
