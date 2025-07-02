@@ -1,186 +1,235 @@
 # micro:bit Serial HID Bridge
 
-Python companion application that converts serial commands from micro:bit into keyboard and mouse input on your computer.
+Transform your micro:bit into a keyboard and mouse controller for your computer. This Python bridge automatically handles the connection between your micro:bit running the Serial HID MakeCode extension and your computer's input system.
 
-## 🚀 Quick Start
+## How It Works
 
-### Option 1: Auto-Install & Run
+The system connects your micro:bit's MakeCode programs to your computer's keyboard and mouse through a simple USB cable and this Python bridge.
+
+```mermaid
+graph TD
+    A["micro:bit with Serial HID Extension"] -->|"USB Serial<br/>HID:KEY:TYPE:Hello"| B["Python HID Bridge"]
+    B -->|"Auto-detects Port"| C["USB Serial Connection"]
+    B -->|"Converts to"| D["Keyboard & Mouse Input"]
+    D --> E["Your Computer"]
+    
+    F["Package Missing?"] -->|"Yes"| G["Auto-Install<br/>pyserial, pynput"]
+    G --> B
+    F -->|"No"| B
+    
+    H["Connection Lost?"] -->|"Yes"| I["Auto-Reconnect<br/>Keep Searching"]
+    I --> C
+    H -->|"No"| B
+```
+
+## Smart Features
+
+**Zero Configuration Setup** - The bridge automatically installs missing packages (pyserial and pynput) when you first run it, so you don't need to worry about dependencies.
+
+**Intelligent Port Detection** - Your micro:bit is automatically discovered across Windows, macOS, and Linux without needing to specify port numbers.
+
+**Automatic Reconnection** - If your micro:bit gets unplugged or the connection drops, the bridge keeps searching and automatically reconnects when it's plugged back in.
+
+**Cross-Platform Compatibility** - Works seamlessly on Windows 10/11, macOS, and Linux distributions including Raspberry Pi.
+
+## Quick Start
+
+The easiest way to get started is using the auto-installer:
+
 ```bash
 python install_and_run.py
 ```
 
-### Option 2: Manual Install
+This automatically installs dependencies and starts the bridge. For manual control:
+
 ```bash
-pip install -r requirements.txt
-python microbit_hid_bridge.py
-```
-
-### Option 3: Specify Port
-```bash
-python microbit_hid_bridge.py --port COM3
-```
-
-## 📋 Requirements
-
-- **Python 3.6+**
-- **micro:bit v2** connected via USB
-- **Admin/sudo privileges** (for system input control)
-
-## 🔧 Installation
-
-### Windows
-```cmd
 pip install pyserial pynput
 python microbit_hid_bridge.py
 ```
 
-### macOS
-```bash
-pip3 install pyserial pynput
-python3 microbit_hid_bridge.py
-```
-
-**Note**: On macOS, grant accessibility permissions:
-`System Preferences > Security & Privacy > Privacy > Accessibility`
-
-### Linux
-```bash
-pip3 install pyserial pynput
-sudo usermod -a -G dialout $USER  # Add user to dialout group
-# Log out and back in
-python3 microbit_hid_bridge.py
-```
-
-## 🎮 Usage
-
-1. **Connect micro:bit** via USB cable
-2. **Run Python script** (it will auto-detect the micro:bit)
-3. **Upload MakeCode program** using the Serial HID extension
-4. **Control computer** with your micro:bit!
-
-## 📡 Protocol
-
-The bridge listens for commands in this format:
-
-```
-HID:TYPE:ACTION:DATA
-```
-
-### Keyboard Commands
-```
-HID:KEY:Hello World           # Type text
-HID:SPECIAL:ENTER            # Special keys  
-HID:COMBO:CTRL+C             # Key combinations
-HID:HOLD:SHIFT+A             # Hold key combo
-HID:RELEASE                  # Release all keys
-```
-
-### Mouse Commands
-```
-HID:MOUSE:MOVE:10,5          # Move cursor
-HID:MOUSE:CLICK:LEFT         # Click buttons
-HID:MOUSE:SCROLL:3           # Scroll wheel
-HID:MOUSE:HOLD:LEFT          # Hold button
-HID:MOUSE:RELEASE:ALL        # Release all
-```
-
-## 🛠️ Command Line Options
+For advanced usage with specific options:
 
 ```bash
-python microbit_hid_bridge.py [OPTIONS]
-
-Options:
-  --port PORT        Specify serial port (e.g., COM3, /dev/ttyACM0)
-  --debug            Enable debug logging
-  --list-ports       List available serial ports
-  --help             Show help message
+python microbit_hid_bridge.py --port COM3 --debug --no-reconnect
 ```
 
-## 🔍 Troubleshooting
+## Requirements
 
-### "Could not find micro:bit"
-```bash
-# List available ports
-python microbit_hid_bridge.py --list-ports
+**Python 3.6 or newer** is required. Most modern systems have this already installed.
 
-# Specify port manually
-python microbit_hid_bridge.py --port COM3
-```
+**micro:bit v2** connected via USB cable. Version 1 micro:bits also work but v2 is recommended for better performance.
 
-### Permission Errors
+**Serial HID MakeCode Extension** must be added to your MakeCode project. Search for this repository URL in MakeCode extensions.
 
-**Windows**: Run Command Prompt as Administrator
+**Administrator privileges** are needed for the script to control keyboard and mouse input. On Windows run Command Prompt as Administrator, on macOS grant Accessibility permissions in System Preferences, and on Linux add your user to the dialout group.
 
-**macOS**: Grant Accessibility permissions in System Preferences
+## Installation by Platform
 
-**Linux**: Add user to dialout group:
+**Windows Users** can run `python install_and_run.py` directly. If prompted, allow the script to install packages automatically. Run Command Prompt as Administrator to ensure proper permissions for keyboard and mouse control.
+
+**macOS Users** should grant Accessibility permissions when prompted. Go to System Preferences → Security & Privacy → Privacy → Accessibility and add Terminal or your Python application to the allowed list.
+
+**Linux Users** need to add themselves to the dialout group for serial port access:
 ```bash
 sudo usermod -a -G dialout $USER
-# Log out and back in
+```
+Then log out and back in for the changes to take effect.
+
+## MakeCode Extension Usage
+
+Add the Serial HID extension to your MakeCode project, then use these namespaces:
+
+**serialHID.initialize()** must be called once at the start of your program to set up the serial communication.
+
+**serialKeyboard** provides functions like `typeText("Hello")`, `pressKey("ENTER")`, and `pressEnter()` for keyboard control.
+
+**serialMouse** provides functions like `move(10, 5)`, `leftClick()`, and `scroll(3)` for mouse control.
+
+Basic MakeCode program structure:
+```javascript
+serialHID.initialize()
+
+input.onButtonPressed(Button.A, function () {
+    serialKeyboard.typeText("Hello from micro:bit!")
+    serialKeyboard.pressEnter()
+})
+
+input.onButtonPressed(Button.B, function () {
+    serialMouse.move(10, 10)
+    serialMouse.leftClick()
+})
 ```
 
-### Serial Port In Use
-- Close Arduino IDE, MakeCode console, or other serial monitors
-- Only one program can access the serial port at a time
+## Communication Protocol
 
-### Nothing Happens
-1. Check that micro:bit is connected and recognized
-2. Verify MakeCode program is uploaded and running
-3. Enable debug mode: `--debug`
-4. Check for error messages
+The bridge listens for specially formatted commands from your micro:bit. All commands follow this pattern:
 
-## 🖥️ Platform Support
+```
+HID:DEVICE:ACTION:DATA
+```
 
-| Platform | Status | Notes |
-|----------|---------|-------|
-| Windows 10/11 | ✅ Full | Auto-detection works |
-| macOS | ✅ Full | Needs accessibility permission |
-| Linux (Ubuntu/Debian) | ✅ Full | Add user to dialout group |
-| Raspberry Pi | ✅ Full | Same as Linux |
+**Keyboard Commands** let you type text, press special keys, and create key combinations:
 
-## 🧪 Testing
+```
+HID:KEY:TYPE:Hello World        # Types the text "Hello World"
+HID:KEY:PRESS:ENTER            # Presses the Enter key
+HID:KEY:COMBO:CTRL+C           # Presses Ctrl+C combination
+```
 
-Test the bridge without micro:bit by sending commands manually:
+**Mouse Commands** control cursor movement, clicking, and scrolling:
 
+```
+HID:MOUSE:MOVE:10,5            # Moves cursor 10 pixels right, 5 down
+HID:MOUSE:CLICK:LEFT           # Left mouse click
+HID:MOUSE:SCROLL:3             # Scrolls up 3 units
+HID:MOUSE:HOLD:LEFT            # Holds left button down
+HID:MOUSE:RELEASE:ALL          # Releases all held buttons
+```
+
+
+
+## Command Line Options
+
+The bridge supports several options for different use cases:
+
+**--port** lets you specify a serial port manually if auto-detection fails. Example: `--port COM3` on Windows or `--port /dev/ttyACM0` on Linux.
+
+**--debug** enables detailed logging so you can see exactly what commands are being received and processed. This is helpful for troubleshooting.
+
+**--no-reconnect** disables the automatic reconnection feature if you prefer the old behavior where the bridge exits when disconnected.
+
+**--list-ports** shows all available serial ports on your system, which is useful for manual port specification.
+
+Full command examples:
 ```bash
-# In debug mode
-python microbit_hid_bridge.py --debug
-
-# Then in another terminal:
-echo "HID:KEY:Hello World" > /dev/ttyACM0  # Linux/Mac
-echo HID:KEY:Hello World > COM3           # Windows
+python microbit_hid_bridge.py --debug --no-reconnect
+python microbit_hid_bridge.py --port COM3 --debug
+python microbit_hid_bridge.py --list-ports
 ```
 
-## 📝 Logging
+## Complete Setup Process
 
-Enable debug logging to see all activity:
+Here's how everything works together from start to finish:
 
-```bash
-python microbit_hid_bridge.py --debug
+```mermaid
+flowchart TD
+    A["1. Add Serial HID Extension<br/>to MakeCode project"] --> B["2. Create MakeCode Program<br/>Uses serialHID.initialize()"]
+    B --> C["3. Connect micro:bit via USB<br/>Any USB port"]
+    C --> D["4. Run Python Bridge<br/>python install_and_run.py"]
+    D --> E["5. Bridge Auto-detects micro:bit<br/>No setup needed"]
+    E --> F["6. Upload MakeCode Program<br/>Flash to micro:bit"]
+    F --> G["7. Close MakeCode Browser Tabs<br/>Release WebUSB connection"]
+    G --> H["8. micro:bit sends HID commands<br/>Via USB serial"]
+    H --> I["9. Bridge converts to input<br/>Keyboard & mouse control"]
+    I --> J["10. Your computer responds<br/>Types, clicks, etc."]
 ```
 
-This shows:
-- Port detection attempts
-- Parsed commands
-- Error messages
-- Non-HID serial output from micro:bit
+The beauty of this system is that steps 4-5 and 7-9 happen automatically. You just focus on creating your MakeCode program, and the bridge handles all the technical details of connecting and converting commands.
 
-## 🔒 Security Notes
+## Troubleshooting Common Issues
 
-- This app can control your computer's keyboard and mouse
-- Only run with trusted micro:bit programs
-- The Python script requires elevated permissions for input control
-- Review the source code if you have security concerns
+**"Could not find micro:bit"** usually means either the micro:bit isn't connected, or the USB cable only provides power without data connection. Try a different USB cable or port. You can also run `--list-ports` to see what devices are available.
 
-## 🤝 Contributing
+**Permission denied errors** happen when the script can't access input control. On Windows, run as Administrator. On macOS, grant Accessibility permissions. On Linux, ensure you're in the dialout group.
 
-Found a bug or want to improve the bridge? 
+**Nothing happens when sending commands** typically indicates either the MakeCode program isn't running, MakeCode browser tabs are still open (blocking WebUSB), or the wrong command format is being sent. Enable debug mode with `--debug` to see exactly what commands are being received.
 
-1. Check the debug output
-2. Test on your platform
-3. Submit issues with full error messages
-4. Include your OS and Python version
+**Package installation fails** can occur in restricted environments. The bridge will show specific error messages and fall back to manual installation instructions.
 
-## 📄 License
+**Serial port conflicts** happen when another program is using the micro:bit's serial connection. Most commonly this is MakeCode's console or simulator still connected via WebUSB. **Always close all MakeCode browser tabs after flashing your program** to release the serial connection.
 
-MIT License - Use freely for personal and commercial projects! 
+**Commands are ignored** usually means MakeCode is still connected via WebUSB. Click "Disconnect" in MakeCode or close all browser tabs with MakeCode open.
+
+## Platform-Specific Notes
+
+**Windows 10 and 11** provide the best plug-and-play experience with automatic driver installation and port detection working reliably.
+
+**macOS** requires one-time Accessibility permission setup, but otherwise works perfectly. The permission dialog will appear automatically when first running the bridge.
+
+**Linux distributions** including Ubuntu, Debian, and Raspberry Pi OS work excellently once the dialout group permission is set up. Some newer distributions may require additional permissions for input simulation.
+
+**Raspberry Pi** makes an excellent dedicated bridge device, allowing you to control other computers over the network or create standalone kiosk systems.
+
+## Working Examples
+
+The project includes several complete working examples in the `Microbit_Examples` folder:
+
+**Tilt Mouse Control** - Use your micro:bit's accelerometer to control the mouse cursor like a joystick. Tilt to move, buttons to click, shake to double-click.
+
+**Simple Controls** - Basic button-based keyboard and mouse controls that you can copy and paste directly into MakeCode.
+
+Check the `Microbit_Examples/README.md` for complete instructions and code for these examples.
+
+## Security and Safety
+
+This software can control your computer's keyboard and mouse, which is a powerful capability that should be used responsibly. Only run the bridge with micro:bit programs you trust, as malicious code could potentially control your computer in unexpected ways.
+
+The bridge requires elevated permissions to simulate keyboard and mouse input. This is a normal requirement for any software that needs to control system input, similar to screen readers or automation tools.
+
+All communication happens over the local USB serial connection. No network connections are made, and no data is transmitted outside your computer.
+
+## Example Projects
+
+**Accessibility Controller** - Create custom input devices for users with mobility limitations using the micro:bit's sensors and buttons.
+
+**Gaming Controller** - Use accelerometer tilting for mouse control and buttons for keyboard shortcuts in your favorite games.
+
+**Presentation Remote** - Control slideshow presentations wirelessly using micro:bit buttons to advance slides and a laser pointer function.
+
+**Home Automation Interface** - Control smart home devices by sending keyboard shortcuts to control applications.
+
+**Educational Tools** - Teach programming concepts by creating physical controllers that interact with educational software.
+
+## Advanced Usage
+
+For developers building complex applications, the bridge supports multiple simultaneous connections and can be easily modified to support additional input types or custom command protocols.
+
+The source code is well-documented and follows Python best practices, making it easy to extend with new features or integrate into larger projects.
+
+Debug mode provides detailed logging of all operations, making it easy to understand exactly how commands are processed and troubleshoot any issues that arise.
+
+The automatic reconnection feature can be disabled for applications that need to handle disconnections differently, providing flexibility for various use cases.
+
+---
+
+*Created with RedBull and coffee by [creativetech.wtf](https://creativetech.wtf)* 

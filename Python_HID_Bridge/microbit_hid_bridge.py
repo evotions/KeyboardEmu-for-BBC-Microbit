@@ -3,37 +3,88 @@
 micro:bit Serial HID Bridge
 Cross-platform Python script to convert serial commands from micro:bit into keyboard/mouse input.
 
+Features:
+    - Auto-installs required packages (pyserial, pynput) if missing
+    - Auto-detects micro:bit port across platforms  
+    - Auto-reconnects when micro:bit is disconnected (can be disabled)
+    - Cross-platform support (Windows, macOS, Linux)
+
 Requirements:
-    pip install pyserial pynput
+    pip install pyserial pynput (auto-installed if missing)
 
 Usage:
-    python microbit_hid_bridge.py [--port COM3] [--debug]
+    python microbit_hid_bridge.py [--port COM3] [--debug] [--no-reconnect]
+    
+Arguments:
+    --port       Specify serial port manually (auto-detected if not provided)
+    --debug      Enable detailed debug logging
+    --no-reconnect  Disable auto-reconnection on disconnect
+    --list-ports    List all available serial ports
 """
 
-import serial
-import serial.tools.list_ports
 import time
 import sys
 import argparse
 import threading
 import platform
+import subprocess
 from typing import Optional, Dict, Any, Set
 
+def install_package(package_name: str) -> bool:
+    """Install a package using pip"""
+    try:
+        print(f"📦 Installing {package_name}...")
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+        print(f"✅ Successfully installed {package_name}")
+        return True
+    except subprocess.CalledProcessError:
+        print(f"❌ Failed to install {package_name}")
+        return False
+
+# Try to import pyserial, install if missing
+try:
+    import serial
+    import serial.tools.list_ports
+except ImportError:
+    print("⚠️  pyserial not found. Attempting to install...")
+    if install_package("pyserial"):
+        try:
+            import serial
+            import serial.tools.list_ports
+        except ImportError:
+            print("ERROR: Failed to import pyserial even after installation.")
+            sys.exit(1)
+    else:
+        print("ERROR: Could not install pyserial. Please install manually: pip install pyserial")
+        sys.exit(1)
+
+# Try to import pynput, install if missing
 try:
     from pynput import keyboard, mouse
     from pynput.keyboard import Key, Listener as KeyboardListener
     from pynput.mouse import Button, Listener as MouseListener
 except ImportError:
-    print("ERROR: pynput not installed. Run: pip install pynput")
-    sys.exit(1)
+    print("⚠️  pynput not found. Attempting to install...")
+    if install_package("pynput"):
+        try:
+            from pynput import keyboard, mouse
+            from pynput.keyboard import Key, Listener as KeyboardListener
+            from pynput.mouse import Button, Listener as MouseListener
+        except ImportError:
+            print("ERROR: Failed to import pynput even after installation.")
+            sys.exit(1)
+    else:
+        print("ERROR: Could not install pynput. Please install manually: pip install pynput")
+        sys.exit(1)
 
 
 class MicrobitHIDBridge:
     """Bridge between micro:bit serial commands and system HID input"""
 
-    def __init__(self, port: Optional[str] = None, debug: bool = False):
+    def __init__(self, port: Optional[str] = None, debug: bool = False, auto_reconnect: bool = True):
         self.port = port
         self.debug = debug
+        self.auto_reconnect = auto_reconnect
         self.serial_conn: Optional[serial.Serial] = None
         self.running = False
         
@@ -151,11 +202,11 @@ class MicrobitHIDBridge:
 
     def connect_serial(self) -> bool:
         """Connect to micro:bit serial port"""
-        if not self.port:
-            self.port = self.find_microbit_port()
+        # Always search for port (in case it changed after reconnect)
+        self.port = self.find_microbit_port()
         
         if not self.port:
-            print("ERROR: Could not find micro:bit. Please specify port manually with --port")
+            self.log("Could not find micro:bit port")
             return False
         
         try:
@@ -173,7 +224,7 @@ class MicrobitHIDBridge:
             return True
             
         except serial.SerialException as e:
-            print(f"ERROR: Failed to connect to {self.port}: {e}")
+            self.log(f"Failed to connect to {self.port}: {e}")
             return False
 
     def parse_command(self, line: str) -> Optional[Dict[str, Any]]:
@@ -345,17 +396,27 @@ class MicrobitHIDBridge:
             self.handle_system_command(action, data)
 
     def run(self) -> None:
-        """Main loop to read serial and process commands"""
-        if not self.connect_serial():
-            return
-        
+        """Main loop to read serial and process commands with auto-reconnection"""
         self.running = True
-        print("🎮 micro:bit HID Bridge active! Use Ctrl+C to quit.")
         
         try:
             while self.running:
-                if self.serial_conn and self.serial_conn.in_waiting:
-                    try:
+                # Try to connect if not connected
+                if not self.serial_conn or not self.serial_conn.is_open:
+                    if not self.connect_serial():
+                        if self.auto_reconnect:
+                            print("🔍 Searching for micro:bit... (Ctrl+C to quit)")
+                            time.sleep(2)  # Wait 2 seconds before retrying
+                            continue
+                        else:
+                            print("❌ Could not connect to micro:bit. Exiting.")
+                            break
+                    else:
+                        print("🎮 micro:bit HID Bridge active! Use Ctrl+C to quit.")
+                
+                # Process serial data
+                try:
+                    if self.serial_conn and self.serial_conn.in_waiting:
                         line = self.serial_conn.readline().decode('utf-8', errors='ignore')
                         if line:
                             command = self.parse_command(line)
@@ -364,11 +425,25 @@ class MicrobitHIDBridge:
                             elif not line.startswith("HID:") and self.debug:
                                 # Show non-HID messages in debug mode
                                 print(f"micro:bit: {line.strip()}")
-                    except serial.SerialException:
+                except serial.SerialException:
+                    if self.auto_reconnect:
+                        print("⚠️  Serial connection lost - searching for micro:bit...")
+                    else:
                         print("⚠️  Serial connection lost")
-                        break
-                    except Exception as e:
-                        self.log(f"Processing error: {e}")
+                    
+                    if self.serial_conn:
+                        try:
+                            self.serial_conn.close()
+                        except:
+                            pass
+                        self.serial_conn = None
+                    
+                    if self.auto_reconnect:
+                        continue  # Go back to reconnection loop
+                    else:
+                        break  # Exit if auto-reconnect is disabled
+                except Exception as e:
+                    self.log(f"Processing error: {e}")
                 
                 time.sleep(0.001)  # Small delay to prevent high CPU usage
                 
@@ -398,6 +473,7 @@ def main():
     parser = argparse.ArgumentParser(description="micro:bit Serial HID Bridge")
     parser.add_argument("--port", help="Serial port (auto-detected if not specified)")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
+    parser.add_argument("--no-reconnect", action="store_true", help="Disable auto-reconnection on disconnect")
     parser.add_argument("--list-ports", action="store_true", help="List available serial ports")
     
     args = parser.parse_args()
@@ -409,7 +485,11 @@ def main():
             print(f"  {port.device} - {port.description}")
         return
     
-    bridge = MicrobitHIDBridge(port=args.port, debug=args.debug)
+    bridge = MicrobitHIDBridge(
+        port=args.port, 
+        debug=args.debug, 
+        auto_reconnect=not args.no_reconnect
+    )
     bridge.run()
 
 
