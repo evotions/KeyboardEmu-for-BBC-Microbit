@@ -4,21 +4,6 @@
 namespace serialKeyboard
 {
 
-    let initialized = false;
-
-    /**
-     * Initialize the keyboard service (deprecated - use serialHID.initialize() instead)
-     */
-    //% blockId="serial_keyboard_start" block="start serial keyboard"
-    //% weight=100
-    export function startKeyboardService(): void
-    {
-        if (!initialized) {
-            serialHID.initialize();
-            initialized = true;
-        }
-    }
-
     /**
      * Type text on the connected computer
      * @param text the text to type
@@ -27,36 +12,93 @@ namespace serialKeyboard
     //% weight=100
     export function typeText(text: string): void
     {
-        serialHID.sendCommand("HID:KEY:" + text);
+        serialHID.sendCommand("HID:KEY:TYPE:" + text);
     }
 
     /**
-     * Press a special key (like Enter, Space, Tab)
-     * @param key the special key to press
+     * Press and immediately release a single key
+     * @param key the key to press (single character or special key like 'ENTER')
      */
     //% block="press key %key"
     //% weight=90
     export function pressKey(key: string): void
     {
-        serialHID.sendCommand("HID:SPECIAL:" + key);
+        // Validate single key input
+        if (isValidSingleKey(key)) {
+            serialHID.sendCommand("HID:KEY:PRESS:" + key.toUpperCase());
+        }
     }
 
     /**
-     * Press a key combination (like Ctrl+C, Alt+Tab)
-     * @param combo the key combination to press (e.g., "CTRL+C")
+     * Press and hold a single key (until released)
+     * @param key the key to hold (single character or special key like 'SHIFT')
      */
-    //% block="press keys %combo"
+    //% block="hold key %key"
     //% weight=80
-    export function pressCombo(combo: string): void
+    export function holdKey(key: string): void
     {
-        serialHID.sendCommand("HID:COMBO:" + combo);
+        // Validate single key input
+        if (isValidSingleKey(key)) {
+            serialHID.sendCommand("HID:KEY:HOLD:" + key.toUpperCase());
+        }
     }
+
+    /**
+     * Release a specific held key
+     * @param key the key to release
+     */
+    //% block="release key %key"
+    //% weight=70
+    export function releaseKey(key: string): void
+    {
+        if (isValidSingleKey(key)) {
+            serialHID.sendCommand("HID:KEY:RELEASE:" + key.toUpperCase());
+        }
+    }
+
+    /**
+     * Release all held keys
+     */
+    //% block="release all keys"
+    //% weight=60
+    export function releaseAllKeys(): void
+    {
+        serialHID.sendCommand("HID:KEY:RELEASE:ALL");
+    }
+
+    /**
+     * Validate that input is a single key
+     * @param key the key to validate
+     */
+    function isValidSingleKey(key: string): boolean
+    {
+        if (!key || key.length === 0) {
+            return false;
+        }
+
+        // Single character (a-z, 0-9, symbols)
+        if (key.length === 1) {
+            return true;
+        }
+
+        // Special keys (must be from approved list)
+        const specialKeys = [
+            "ENTER", "SPACE", "TAB", "ESC", "ESCAPE", "DELETE", "BACKSPACE",
+            "SHIFT", "CTRL", "ALT", "WIN", "CMD",
+            "UP", "DOWN", "LEFT", "RIGHT", "HOME", "END", "PAGE_UP", "PAGE_DOWN",
+            "F1", "F2", "F3", "F4", "F5", "F6", "F7", "F8", "F9", "F10", "F11", "F12"
+        ];
+
+        return specialKeys.indexOf(key.toUpperCase()) !== -1;
+    }
+
+    // === CONVENIENCE FUNCTIONS ===
 
     /**
      * Press Enter key
      */
     //% block="press Enter"
-    //% weight=70
+    //% weight=50
     export function pressEnter(): void
     {
         pressKey("ENTER");
@@ -66,7 +108,7 @@ namespace serialKeyboard
      * Press Space key
      */
     //% block="press Space"
-    //% weight=60
+    //% weight=40
     export function pressSpace(): void
     {
         pressKey("SPACE");
@@ -76,7 +118,7 @@ namespace serialKeyboard
      * Press Tab key
      */
     //% block="press Tab"
-    //% weight=50
+    //% weight=30
     export function pressTab(): void
     {
         pressKey("TAB");
@@ -86,153 +128,141 @@ namespace serialKeyboard
      * Press Escape key
      */
     //% block="press Escape"
-    //% weight=40
+    //% weight=20
     export function pressEscape(): void
     {
-        pressKey("ESCAPE");
+        pressKey("ESC");
     }
+
+    // === COMMON KEY COMBINATIONS ===
 
     /**
      * Copy selected text (Ctrl+C)
      */
-    //% block="copy"
-    //% weight=30
+    //% block="copy (Ctrl+C)"
+    //% weight=15
     export function copy(): void
     {
-        pressCombo("CTRL+C");
+        holdKey("CTRL");
+        pressKey("C");
+        releaseKey("CTRL");
     }
 
     /**
      * Paste from clipboard (Ctrl+V)
      */
-    //% block="paste"
-    //% weight=20
+    //% block="paste (Ctrl+V)"
+    //% weight=14
     export function paste(): void
     {
-        pressCombo("CTRL+V");
+        holdKey("CTRL");
+        pressKey("V");
+        releaseKey("CTRL");
     }
 
     /**
      * Cut selected text (Ctrl+X)
      */
-    //% block="cut"
-    //% weight=10
+    //% block="cut (Ctrl+X)"
+    //% weight=13
     export function cut(): void
     {
-        pressCombo("CTRL+X");
+        holdKey("CTRL");
+        pressKey("X");
+        releaseKey("CTRL");
     }
 
-    // Key modifiers
-    export class Modifier
+    /**
+     * Select all (Ctrl+A)
+     */
+    //% block="select all (Ctrl+A)"
+    //% weight=12
+    export function selectAll(): void
     {
-        static readonly CTRL = "CTRL"
-        static readonly SHIFT = "SHIFT"
-        static readonly ALT = "ALT"
-        static readonly WIN = "WIN"
-        static readonly CMD = "CMD"
+        holdKey("CTRL");
+        pressKey("A");
+        releaseKey("CTRL");
     }
 
-    // Special keys
-    export class Key
+    /**
+     * Undo (Ctrl+Z)
+     */
+    //% block="undo (Ctrl+Z)"
+    //% weight=11
+    export function undo(): void
     {
-        static readonly ENTER = "ENTER"
-        static readonly ESC = "ESC"
-        static readonly DELETE = "DELETE"
-        static readonly BACKSPACE = "BACKSPACE"
-        static readonly TAB = "TAB"
-        static readonly UP = "UP"
-        static readonly DOWN = "DOWN"
-        static readonly LEFT = "LEFT"
-        static readonly RIGHT = "RIGHT"
-        static readonly HOME = "HOME"
-        static readonly END = "END"
-        static readonly PAGE_UP = "PAGE_UP"
-        static readonly PAGE_DOWN = "PAGE_DOWN"
-        static readonly F1 = "F1"
-        static readonly F2 = "F2"
-        static readonly F3 = "F3"
-        static readonly F4 = "F4"
-        static readonly F5 = "F5"
-        static readonly F6 = "F6"
-        static readonly F7 = "F7"
-        static readonly F8 = "F8"
-        static readonly F9 = "F9"
-        static readonly F10 = "F10"
-        static readonly F11 = "F11"
-        static readonly F12 = "F12"
+        holdKey("CTRL");
+        pressKey("Z");
+        releaseKey("CTRL");
     }
 
-    export enum _Modifier
+    // === HELPER ENUMS FOR BLOCKS ===
+
+    export enum SpecialKey
     {
-        //% block="ctrl+"
-        control,
-        //% block="shift+"
-        shift,
-        //% block="alt+"
-        alt,
-        //% block="win+"
-        windows,
-        //% block="cmd+"
-        command
+        //% block="Enter"
+        ENTER = "ENTER",
+        //% block="Space"
+        SPACE = "SPACE",
+        //% block="Tab"
+        TAB = "TAB",
+        //% block="Escape"
+        ESC = "ESC",
+        //% block="Delete"
+        DELETE = "DELETE",
+        //% block="Backspace"
+        BACKSPACE = "BACKSPACE",
+        //% block="↑ Up Arrow"
+        UP = "UP",
+        //% block="↓ Down Arrow"  
+        DOWN = "DOWN",
+        //% block="← Left Arrow"
+        LEFT = "LEFT",
+        //% block="→ Right Arrow"
+        RIGHT = "RIGHT",
+        //% block="Home"
+        HOME = "HOME",
+        //% block="End"
+        END = "END"
     }
 
-    //% blockId="modifier_key" block="%key"
-    //% weight=50
-    export function modifier(key: _Modifier): string
+    export enum ModifierKey
     {
-        switch (key) {
-            case _Modifier.control: return Modifier.CTRL + "+";
-            case _Modifier.shift: return Modifier.SHIFT + "+";
-            case _Modifier.alt: return Modifier.ALT + "+";
-            case _Modifier.windows: return Modifier.WIN + "+";
-            case _Modifier.command: return Modifier.CMD + "+";
-            default: return "";
-        }
+        //% block="Shift"
+        SHIFT = "SHIFT",
+        //% block="Ctrl"
+        CTRL = "CTRL",
+        //% block="Alt"
+        ALT = "ALT",
+        //% block="Win"
+        WIN = "WIN"
     }
 
-    export enum _Key
+    export enum FunctionKey
     {
-        //% block="enter"
-        enter,
-        //% block="escape"
-        escape,
-        //% block="delete"
-        delete,
-        //% block="backspace"
-        backspace,
-        //% block="tab"
-        tab,
-        //% block="up arrow"
-        up,
-        //% block="down arrow"
-        down,
-        //% block="left arrow"
-        left,
-        //% block="right arrow"
-        right,
-        //% block="home"
-        home,
-        //% block="end"
-        end
-    }
-
-    //% blockId="special_key" block="%key"
-    //% weight=40
-    export function specialKey(key: _Key): string
-    {
-        switch (key) {
-            case _Key.enter: return Key.ENTER;
-            case _Key.escape: return Key.ESC;
-            case _Key.delete: return Key.DELETE;
-            case _Key.backspace: return Key.BACKSPACE;
-            case _Key.tab: return Key.TAB;
-            case _Key.up: return Key.UP;
-            case _Key.down: return Key.DOWN;
-            case _Key.left: return Key.LEFT;
-            case _Key.right: return Key.RIGHT;
-            case _Key.home: return Key.HOME;
-            case _Key.end: return Key.END;
-            default: return "";
-        }
+        //% block="F1"
+        F1 = "F1",
+        //% block="F2"
+        F2 = "F2",
+        //% block="F3"
+        F3 = "F3",
+        //% block="F4"
+        F4 = "F4",
+        //% block="F5"
+        F5 = "F5",
+        //% block="F6"
+        F6 = "F6",
+        //% block="F7"
+        F7 = "F7",
+        //% block="F8"
+        F8 = "F8",
+        //% block="F9"
+        F9 = "F9",
+        //% block="F10"
+        F10 = "F10",
+        //% block="F11"
+        F11 = "F11",
+        //% block="F12"
+        F12 = "F12"
     }
 } 

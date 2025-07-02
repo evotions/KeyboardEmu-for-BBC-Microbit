@@ -4,21 +4,6 @@
 namespace serialMouse
 {
 
-    let initialized = false;
-
-    /**
-     * Initialize the mouse service (deprecated - use serialHID.initialize() instead)
-     */
-    //% blockId="serial_mouse_start" block="start serial mouse"
-    //% weight=100
-    export function startMouseService(): void
-    {
-        if (!initialized) {
-            serialHID.initialize();
-            initialized = true;
-        }
-    }
-
     /**
      * Move the mouse cursor
      * @param x horizontal movement (negative = left, positive = right)

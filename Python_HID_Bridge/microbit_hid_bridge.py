@@ -48,7 +48,9 @@ class MicrobitHIDBridge:
         # Key mappings
         self.special_keys = {
             'ENTER': Key.enter,
+            'SPACE': Key.space,
             'ESC': Key.esc,
+            'ESCAPE': Key.esc,  # Allow both ESC and ESCAPE
             'DELETE': Key.delete,
             'BACKSPACE': Key.backspace,
             'TAB': Key.tab,
@@ -195,62 +197,75 @@ class MicrobitHIDBridge:
         return command
 
     def handle_keyboard_command(self, action: str, data: str) -> None:
-        """Handle keyboard-related commands"""
+        """Handle keyboard-related commands with new protocol"""
         try:
-            if action == "KEY":
-                # Send text string
+            if action == "TYPE":
+                # Type text string
                 self.log(f"Typing text: '{data}' (length: {len(data)})")
                 self.keyboard_controller.type(data)
                 
-            elif action == "SPECIAL":
-                # Send special key
-                if data in self.special_keys:
-                    self.keyboard_controller.press(self.special_keys[data])
-                    self.keyboard_controller.release(self.special_keys[data])
-                else:
-                    self.log(f"Unknown special key: {data}")
-                    
-            elif action == "COMBO":
-                # Send key combination (e.g., "CTRL+C")
-                self.handle_key_combination(data, hold=False)
-                
-            elif action == "HOLD":
-                # Hold key combination
-                self.handle_key_combination(data, hold=True)
-                
-            elif action == "RELEASE":
-                # Release all held keys
-                for key in self.held_keys.copy():
+            elif action == "PRESS":
+                # Press and immediately release a single key
+                key = self.parse_single_key(data)
+                if key:
+                    self.log(f"Pressing key: {data} -> {key}")
+                    self.keyboard_controller.press(key)
                     self.keyboard_controller.release(key)
-                    self.held_keys.remove(key)
+                else:
+                    self.log(f"Invalid single key: {data}")
                     
+            elif action == "HOLD":
+                # Press and hold a single key
+                key = self.parse_single_key(data)
+                if key:
+                    self.log(f"Holding key: {data} -> {key}")
+                    self.keyboard_controller.press(key)
+                    self.held_keys.add(key)
+                else:
+                    self.log(f"Invalid single key for hold: {data}")
+                    
+            elif action == "RELEASE":
+                if data.upper() == "ALL":
+                    # Release all held keys
+                    self.log(f"Releasing all {len(self.held_keys)} held keys")
+                    for key in self.held_keys.copy():
+                        self.keyboard_controller.release(key)
+                        self.held_keys.remove(key)
+                else:
+                    # Release specific key
+                    key = self.parse_single_key(data)
+                    if key and key in self.held_keys:
+                        self.log(f"Releasing key: {data} -> {key}")
+                        self.keyboard_controller.release(key)
+                        self.held_keys.remove(key)
+                    else:
+                        self.log(f"Key not held or invalid: {data}")
+                        
         except Exception as e:
             self.log(f"Keyboard command error: {e}")
 
-    def handle_key_combination(self, combo: str, hold: bool = False) -> None:
-        """Handle key combinations like CTRL+C"""
-        parts = combo.split("+")
-        keys_to_press = []
+    def parse_single_key(self, key_str: str) -> Any:
+        """Parse a single key string into pynput key object"""
+        if not key_str:
+            return None
+            
+        key_upper = key_str.upper()
         
-        for part in parts:
-            part = part.strip().upper()
-            if part in self.modifier_keys:
-                keys_to_press.append(self.modifier_keys[part])
-            elif part in self.special_keys:
-                keys_to_press.append(self.special_keys[part])
-            elif len(part) == 1:
-                keys_to_press.append(part.lower())
-        
-        # Press all keys
-        for key in keys_to_press:
-            self.keyboard_controller.press(key)
-            if hold:
-                self.held_keys.add(key)
-        
-        # Release if not holding
-        if not hold:
-            for key in reversed(keys_to_press):
-                self.keyboard_controller.release(key)
+        # Check special keys first
+        if key_upper in self.special_keys:
+            return self.special_keys[key_upper]
+            
+        # Check modifier keys
+        if key_upper in self.modifier_keys:
+            return self.modifier_keys[key_upper]
+            
+        # Single character key
+        if len(key_str) == 1:
+            return key_str.lower()
+            
+        return None
+
+
 
     def handle_mouse_command(self, action: str, data: str) -> None:
         """Handle mouse-related commands"""
@@ -318,18 +333,18 @@ class MicrobitHIDBridge:
     def process_command(self, command: Dict[str, Any]) -> None:
         """Process a parsed HID command"""
         cmd_type = command['type'].upper()
-        action = command['action']  # DON'T uppercase the action - preserve case!
+        action = command['action'].upper()  
         data = command['data']
         
-        # Keyboard commands: HID:KEY:text, HID:SPECIAL:ENTER, HID:COMBO:CTRL+C
-        if cmd_type in ['KEY', 'SPECIAL', 'COMBO']:
-            self.handle_keyboard_command(cmd_type, action)
+        # New keyboard commands: HID:KEY:TYPE:text, HID:KEY:PRESS:a, HID:KEY:HOLD:SHIFT, etc.
+        if cmd_type == 'KEY':
+            self.handle_keyboard_command(action, data)
                 
         elif cmd_type == 'MOUSE':
-            self.handle_mouse_command(action.upper(), data)
+            self.handle_mouse_command(action, data)
             
         elif cmd_type in ['INIT', 'SYSTEM', 'PING']:
-            self.handle_system_command(action.upper(), data)
+            self.handle_system_command(action, data)
 
     def run(self) -> None:
         """Main loop to read serial and process commands"""

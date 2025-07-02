@@ -1,11 +1,8 @@
-// Working Tilt Mouse - Direct serial commands (100% reliable)
+// Working Tilt Mouse - Updated for new keyboard protocol
 // Paste this into MakeCode JavaScript tab
 
-// Initialize serial exactly like the extension does
-serial.setBaudRate(BaudRate.BaudRate9600)
-serial.setWriteLinePadding(0)
-basic.pause(200)
-serial.writeLine("HID:INIT:SYSTEM")
+// Initialize HID system
+serialHID.initialize()
 basic.showString("READY")
 
 // Settings
@@ -30,8 +27,7 @@ basic.forever(function ()
     }
 
     if (moveX != 0 || moveY != 0) {
-        serial.writeLine("HID:MOUSE:MOVE:" + moveX + "," + moveY)
-        basic.pause(10)  // Same delay as extension
+        serialMouse.moveMouse(moveX, moveY)
 
         // Visual feedback
         basic.clearScreen()
@@ -48,8 +44,7 @@ basic.forever(function ()
 // Button A = Left Click
 input.onButtonPressed(Button.A, function ()
 {
-    serial.writeLine("HID:MOUSE:CLICK:LEFT")
-    basic.pause(10)
+    serialMouse.leftClick()
     basic.showIcon(IconNames.SmallSquare)
     basic.pause(200)
     basic.clearScreen()
@@ -58,8 +53,7 @@ input.onButtonPressed(Button.A, function ()
 // Button B = Right Click
 input.onButtonPressed(Button.B, function ()
 {
-    serial.writeLine("HID:MOUSE:CLICK:RIGHT")
-    basic.pause(10)
+    serialMouse.rightClick()
     basic.showIcon(IconNames.Square)
     basic.pause(200)
     basic.clearScreen()
@@ -68,10 +62,7 @@ input.onButtonPressed(Button.B, function ()
 // Shake = Double Click
 input.onGesture(Gesture.Shake, function ()
 {
-    serial.writeLine("HID:MOUSE:CLICK:LEFT")
-    basic.pause(50)
-    serial.writeLine("HID:MOUSE:CLICK:LEFT")
-    basic.pause(10)
+    serialMouse.doubleClick()
     basic.showIcon(IconNames.Heart)
     basic.pause(300)
     basic.clearScreen()
@@ -84,8 +75,7 @@ basic.forever(function ()
         let scrollY = input.acceleration(Dimension.Y)
         if (Math.abs(scrollY) > 200) {
             let scroll = Math.map(scrollY, -1000, 1000, 3, -3)
-            serial.writeLine("HID:MOUSE:SCROLL:" + scroll)
-            basic.pause(10)
+            serialMouse.scrollMouse(scroll)
             basic.showArrow(scroll > 0 ? ArrowNames.North : ArrowNames.South)
             basic.pause(200)
             basic.clearScreen()
