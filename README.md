@@ -1,6 +1,10 @@
-# Keyboard Emu for BBC Microbit
+<div align="center">
+  <img src="kbemu-logo.png" alt="Keyboard Emu for BBC Microbit" width="400">
+  <h1>Keyboard Emu for BBC Microbit</h1>
+  <p><em>Transform your BBC micro:bit into a keyboard and mouse input emulator</em></p>
+</div>
 
-Transform your BBC micro:bit into a keyboard and mouse input emulator for your computer. This complete project includes both the MakeCode extension and Python bridge that automatically handles the connection between your micro:bit and your computer's input system.
+This complete project includes both the MakeCode extension and Python bridge that automatically handles the connection between your micro:bit and your computer's input system.
 
 ## How It Works
 
