@@ -34,9 +34,9 @@ Your micro:bit sends commands like `HID:KEY:Hello` over serial. The Python bridg
 Here's how everything works together from start to finish:
 
 ```mermaid
-flowchart TD
+graph TD
     A["1. Add Serial HID Extension<br/>to MakeCode project"] --> B["2. Create MakeCode Program<br/>Uses serialHID.initialize()"]
-    B --> C["3. Connect micro:bit via USB<br/>Any USB port"] 
+    B --> C["3. Connect micro:bit via USB<br/>Any USB port"]
     C --> D["4. Run Python Bridge<br/>python install_and_run.py"]
     D --> E["5. Bridge Auto-detects micro:bit<br/>No setup needed"]
     E --> F["6. Upload MakeCode Program<br/>Flash to micro:bit"]
