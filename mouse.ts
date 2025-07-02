@@ -1,6 +1,7 @@
 //% color=#8000FF 
 //% icon="\uf245"
 //% block="Mouse Emu"
+//% weight=80
 namespace serialMouse
 {
 
@@ -14,6 +15,20 @@ namespace serialMouse
     //% x.min=-127 x.max=127
     //% y.min=-127 y.max=127
     export function moveMouse(x: number, y: number): void
+    {
+        serialHID.sendCommand("HID:MOUSE:MOVE:" + x + "," + y);
+    }
+
+    /**
+     * Move the mouse cursor (alias for moveMouse for compatibility)
+     * @param x horizontal movement (negative = left, positive = right)
+     * @param y vertical movement (negative = up, positive = down)
+     */
+    //% block="move x %x y %y"
+    //% weight=99
+    //% x.min=-127 x.max=127
+    //% y.min=-127 y.max=127
+    export function move(x: number, y: number): void
     {
         serialHID.sendCommand("HID:MOUSE:MOVE:" + x + "," + y);
     }

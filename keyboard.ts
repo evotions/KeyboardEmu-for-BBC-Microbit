@@ -1,6 +1,7 @@
 //% color=#0000FF 
 //% icon="\uf11c"
-//% block="Keyboard Emu"
+//% block="Keyboard Emu" 
+//% weight=90
 namespace serialKeyboard
 {
 
@@ -27,6 +28,41 @@ namespace serialKeyboard
         if (isValidSingleKey(key)) {
             serialHID.sendCommand("HID:KEY:PRESS:" + key.toUpperCase());
         }
+    }
+
+    /**
+     * Send a string of text (alias for typeText for compatibility)
+     * @param text the text to send
+     */
+    //% block="send string %text"
+    //% weight=95
+    export function sendString(text: string): void
+    {
+        serialHID.sendCommand("HID:KEY:TYPE:" + text);
+    }
+
+    /**
+     * Send special keys
+     * @param key the special key to send
+     */
+    //% block="send special key %key"
+    //% weight=85
+    export function sendSpecialKeys(key: string): void
+    {
+        if (isValidSingleKey(key)) {
+            serialHID.sendCommand("HID:KEY:PRESS:" + key.toUpperCase());
+        }
+    }
+
+    /**
+     * Send key combination like Ctrl+C
+     * @param combo the key combination (e.g. "CTRL+C")
+     */
+    //% block="send key combo %combo"
+    //% weight=80
+    export function sendKeyCombo(combo: string): void
+    {
+        serialHID.sendCommand("HID:KEY:COMBO:" + combo);
     }
 
 
@@ -169,5 +205,27 @@ namespace serialKeyboard
         F11 = "F11",
         //% block="F12"
         F12 = "F12"
+    }
+
+    /**
+     * Get special key string for use in blocks
+     * @param key the special key
+     */
+    //% block="special key %key"
+    //% weight=75
+    export function specialKey(key: SpecialKey): string
+    {
+        return key.toString();
+    }
+
+    /**
+     * Get modifier key string for combinations
+     * @param key the modifier key
+     */
+    //% block="modifier %key"
+    //% weight=70
+    export function modifier(key: ModifierKey): string
+    {
+        return key.toString() + "+";
     }
 } 

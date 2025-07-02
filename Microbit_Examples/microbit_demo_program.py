@@ -19,7 +19,7 @@ Simple Text Typing:
 ```blocks
 input.onButtonPressed(Button.A, function () {
     serialKeyboard.sendString("Hello World!")
-    serialKeyboard.sendSpecialKeys(serialKeyboard.specialKey(_Key.enter))
+    serialKeyboard.sendSpecialKeys("ENTER")
 })
 ```
 
@@ -50,16 +50,12 @@ Special Key Combinations:
 ```blocks
 input.onButtonPressed(Button.AB, function () {
     // Copy (Ctrl+C)
-    serialKeyboard.sendKeyCombo(
-        serialKeyboard.modifier(_Modifier.control) + "c"
-    )
+    serialKeyboard.sendKeyCombo("CTRL+C")
     
     basic.pause(500)
     
     // Paste (Ctrl+V)  
-    serialKeyboard.sendKeyCombo(
-        serialKeyboard.modifier(_Modifier.control) + "v"
-    )
+    serialKeyboard.sendKeyCombo("CTRL+V")
 })
 ```
 
@@ -115,12 +111,12 @@ Presentation Remote:
 ```blocks
 input.onButtonPressed(Button.A, function () {
     // Next slide
-    serialKeyboard.sendSpecialKeys(serialKeyboard.specialKey(_Key.right))
+    serialKeyboard.sendSpecialKeys("RIGHT")
 })
 
 input.onButtonPressed(Button.B, function () {
     // Previous slide
-    serialKeyboard.sendSpecialKeys(serialKeyboard.specialKey(_Key.left))
+    serialKeyboard.sendSpecialKeys("LEFT")
 })
 
 input.onGesture(Gesture.Shake, function () {

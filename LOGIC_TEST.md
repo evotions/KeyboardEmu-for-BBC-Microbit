@@ -35,7 +35,7 @@ HID:TYPE:ACTION:DATA
 | `sendString("Hi")` | `HID:KEY:Hi` | `keyboard.type("Hi")` | ✅ Types text |
 | `sendSpecialKeys("ENTER")` | `HID:SPECIAL:ENTER` | `keyboard.press(Key.enter)` | ✅ Presses Enter |
 | `sendKeyCombo("CTRL+C")` | `HID:COMBO:CTRL+C` | `keyboard.press(Key.ctrl), keyboard.press('c')` | ✅ Ctrl+C |
-| `releaseKeys()` | `HID:RELEASE` | `keyboard.release(all_held_keys)` | ✅ Releases all |
+| `serialMouse.releaseAll()` | `HID:MOUSE:RELEASE:ALL` | `mouse.release(all_held_buttons)` | ✅ Releases all mouse buttons |
 
 ### Mouse Commands Logic
 | MakeCode Function | Serial Command | Python Action | Result |

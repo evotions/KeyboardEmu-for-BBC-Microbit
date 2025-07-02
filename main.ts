@@ -7,7 +7,7 @@
  * Requires companion Python script running on the host computer.
  */
 
-//% weight=100 color=#0fbc11 icon="\uf11c"
+//% weight=100 color=#0fbc11 icon="\uf11c" block="Keyboard Emu System"
 namespace serialHID
 {
 

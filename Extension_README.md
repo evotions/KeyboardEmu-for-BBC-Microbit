@@ -29,7 +29,7 @@ serialHID.initialize()
 ### 3. Send Keyboard Input
 ```blocks
 serialKeyboard.sendString("Hello World!")
-serialKeyboard.sendSpecialKeys(serialKeyboard.specialKey(_Key.enter))
+serialKeyboard.sendSpecialKeys("ENTER")
 ```
 
 ### 4. Control Mouse
@@ -53,7 +53,7 @@ Download and run the companion Python script on your computer to enable HID func
 - `specialKey(key)` - Get special key string (Enter, Tab, etc.)
 
 ### Advanced
-- `releaseKeys()` - Release all held keys
+- `releaseAll()` - Release all held mouse buttons
 
 ## Mouse Functions
 

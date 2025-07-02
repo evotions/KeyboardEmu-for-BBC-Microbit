@@ -4,7 +4,9 @@
     "description": "Keyboard Emu for BBC Microbit - Serial input emulation for keyboard and mouse control",
     "license": "MIT",
     "dependencies": {
-        "core": "*"
+        "core": "*",
+        "radio": "*",
+        "microphone": "*"
     },
     "files": [
         "README.md",
@@ -17,7 +19,7 @@
     ],
     "public": true,
     "targetVersions": {
-        "target": "6.0.18",
+        "target": "6.0.22",
         "targetId": "microbit"
     },
     "supportedTargets": [
