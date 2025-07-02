@@ -1,2 +1,4 @@
 # Ignore the entire Reference_Plugin folder
 Reference_Plugin/ 
+/Python_HID_Bridge/__pycache__
+Python_HID_Bridge/__pycache__/microbit_hid_bridge.cpython-310.pyc
