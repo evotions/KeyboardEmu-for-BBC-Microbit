@@ -35,15 +35,15 @@ Here's how everything works together from start to finish:
 
 ```mermaid
 graph TD
-    A["1. Add Serial HID Extension<br/>to MakeCode project"] --> B["2. Create MakeCode Program<br/>Uses serialHID.initialize()"]
-    B --> C["3. Connect micro:bit via USB<br/>Any USB port"]
-    C --> D["4. Run Python Bridge<br/>python install_and_run.py"]
-    D --> E["5. Bridge Auto-detects micro:bit<br/>No setup needed"]
-    E --> F["6. Upload MakeCode Program<br/>Flash to micro:bit"]
-    F --> G["7. Close MakeCode Browser Tabs<br/>Release WebUSB connection"]
-    G --> H["8. micro:bit sends HID commands<br/>Via USB serial"]
-    H --> I["9. Bridge converts to input<br/>Keyboard & mouse control"]
-    I --> J["10. Your computer responds<br/>Types, clicks, etc."]
+    A[Add Serial HID Extension] --> B[Create MakeCode Program]
+    B --> C[Connect micro:bit via USB]
+    C --> D[Run Python Bridge]
+    D --> E[Bridge Auto-detects micro:bit]
+    E --> F[Upload MakeCode Program]
+    F --> G[Close MakeCode Browser Tabs]
+    G --> H[micro:bit sends HID commands]
+    H --> I[Bridge converts to input]
+    I --> J[Computer responds]
 ```
 
 The beauty of this system is that steps 4-5 and 8-10 happen automatically. You just focus on creating your MakeCode program with the Serial HID extension, and the bridge handles all the technical details.
