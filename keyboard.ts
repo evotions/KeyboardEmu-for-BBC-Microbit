@@ -29,42 +29,7 @@ namespace serialKeyboard
         }
     }
 
-    /**
-     * Press and hold a single key (until released)
-     * @param key the key to hold (single character or special key like 'SHIFT')
-     */
-    //% block="hold key %key"
-    //% weight=80
-    export function holdKey(key: string): void
-    {
-        // Validate single key input
-        if (isValidSingleKey(key)) {
-            serialHID.sendCommand("HID:KEY:HOLD:" + key.toUpperCase());
-        }
-    }
 
-    /**
-     * Release a specific held key
-     * @param key the key to release
-     */
-    //% block="release key %key"
-    //% weight=70
-    export function releaseKey(key: string): void
-    {
-        if (isValidSingleKey(key)) {
-            serialHID.sendCommand("HID:KEY:RELEASE:" + key.toUpperCase());
-        }
-    }
-
-    /**
-     * Release all held keys
-     */
-    //% block="release all keys"
-    //% weight=60
-    export function releaseAllKeys(): void
-    {
-        serialHID.sendCommand("HID:KEY:RELEASE:ALL");
-    }
 
     /**
      * Validate that input is a single key
@@ -134,67 +99,7 @@ namespace serialKeyboard
         pressKey("ESC");
     }
 
-    // === COMMON KEY COMBINATIONS ===
 
-    /**
-     * Copy selected text (Ctrl+C)
-     */
-    //% block="copy (Ctrl+C)"
-    //% weight=15
-    export function copy(): void
-    {
-        holdKey("CTRL");
-        pressKey("C");
-        releaseKey("CTRL");
-    }
-
-    /**
-     * Paste from clipboard (Ctrl+V)
-     */
-    //% block="paste (Ctrl+V)"
-    //% weight=14
-    export function paste(): void
-    {
-        holdKey("CTRL");
-        pressKey("V");
-        releaseKey("CTRL");
-    }
-
-    /**
-     * Cut selected text (Ctrl+X)
-     */
-    //% block="cut (Ctrl+X)"
-    //% weight=13
-    export function cut(): void
-    {
-        holdKey("CTRL");
-        pressKey("X");
-        releaseKey("CTRL");
-    }
-
-    /**
-     * Select all (Ctrl+A)
-     */
-    //% block="select all (Ctrl+A)"
-    //% weight=12
-    export function selectAll(): void
-    {
-        holdKey("CTRL");
-        pressKey("A");
-        releaseKey("CTRL");
-    }
-
-    /**
-     * Undo (Ctrl+Z)
-     */
-    //% block="undo (Ctrl+Z)"
-    //% weight=11
-    export function undo(): void
-    {
-        holdKey("CTRL");
-        pressKey("Z");
-        releaseKey("CTRL");
-    }
 
     // === HELPER ENUMS FOR BLOCKS ===
 

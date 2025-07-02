@@ -17,7 +17,7 @@ import sys
 import argparse
 import threading
 import platform
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, Set
 
 try:
     from pynput import keyboard, mouse
@@ -41,8 +41,7 @@ class MicrobitHIDBridge:
         self.keyboard_controller = keyboard.Controller()
         self.mouse_controller = mouse.Controller()
         
-        # Held keys and buttons tracking
-        self.held_keys = set()
+        # Held mouse buttons tracking  
         self.held_mouse_buttons = set()
         
         # Key mappings
@@ -71,7 +70,7 @@ class MicrobitHIDBridge:
             'CTRL': Key.ctrl,
             'SHIFT': Key.shift,
             'ALT': Key.alt,
-            'WIN': Key.cmd if platform.system() == 'Darwin' else Key.ctrl_l,
+            'WIN': Key.cmd,  # Works for both Windows key and Mac Cmd key
             'CMD': Key.cmd,
         }
         
@@ -85,6 +84,8 @@ class MicrobitHIDBridge:
         """Log debug messages if debug mode is enabled"""
         if self.debug:
             print(f"[DEBUG] {message}")
+
+
 
     def find_microbit_port(self) -> Optional[str]:
         """Auto-detect micro:bit serial port across platforms"""
@@ -214,32 +215,9 @@ class MicrobitHIDBridge:
                 else:
                     self.log(f"Invalid single key: {data}")
                     
-            elif action == "HOLD":
-                # Press and hold a single key
-                key = self.parse_single_key(data)
-                if key:
-                    self.log(f"Holding key: {data} -> {key}")
-                    self.keyboard_controller.press(key)
-                    self.held_keys.add(key)
-                else:
-                    self.log(f"Invalid single key for hold: {data}")
-                    
-            elif action == "RELEASE":
-                if data.upper() == "ALL":
-                    # Release all held keys
-                    self.log(f"Releasing all {len(self.held_keys)} held keys")
-                    for key in self.held_keys.copy():
-                        self.keyboard_controller.release(key)
-                        self.held_keys.remove(key)
-                else:
-                    # Release specific key
-                    key = self.parse_single_key(data)
-                    if key and key in self.held_keys:
-                        self.log(f"Releasing key: {data} -> {key}")
-                        self.keyboard_controller.release(key)
-                        self.held_keys.remove(key)
-                    else:
-                        self.log(f"Key not held or invalid: {data}")
+            elif action == "COMBO":
+                # Handle key combinations (e.g., "CTRL+C")
+                self.handle_key_combination(data)
                         
         except Exception as e:
             self.log(f"Keyboard command error: {e}")
@@ -265,7 +243,27 @@ class MicrobitHIDBridge:
             
         return None
 
-
+    def handle_key_combination(self, combo: str) -> None:
+        """Handle key combinations like CTRL+C"""
+        parts = combo.split("+")
+        keys_to_press = []
+        
+        for part in parts:
+            part = part.strip().upper()
+            if part in self.modifier_keys:
+                keys_to_press.append(self.modifier_keys[part])
+            elif part in self.special_keys:
+                keys_to_press.append(self.special_keys[part])
+            elif len(part) == 1:
+                keys_to_press.append(part.lower())
+        
+        # Press all keys
+        for key in keys_to_press:
+            self.keyboard_controller.press(key)
+        
+        # Release in reverse order
+        for key in reversed(keys_to_press):
+            self.keyboard_controller.release(key)
 
     def handle_mouse_command(self, action: str, data: str) -> None:
         """Handle mouse-related commands"""
@@ -383,12 +381,7 @@ class MicrobitHIDBridge:
         """Clean up resources"""
         self.running = False
         
-        # Release all held keys and buttons
-        for key in self.held_keys.copy():
-            try:
-                self.keyboard_controller.release(key)
-            except:
-                pass
+        # Release all held mouse buttons
                 
         for button in self.held_mouse_buttons.copy():
             try:
