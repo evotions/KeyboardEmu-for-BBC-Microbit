@@ -7,14 +7,14 @@ Build this project using **ONLY visual blocks** in MakeCode - no coding required
 ### 1. **Import the Extension**
 - In MakeCode, go to **Extensions**
 - Click **Import** → paste your repository URL
-- You should see new block categories: **SerialHID**, **SerialKeyboard**, **SerialMouse**
+- You should see new block categories: **Keyboard Emu System**, **Keyboard Emu**, **Mouse Emu**
 
 ### 2. **Build the Program with Blocks**
 
 #### **🔧 SETUP (on start):**
 ```
 ┌─ on start ─┐
-│ initialize serial HID system │
+│ initialize keyboard emu system │
 │ show string "READY" │
 │ clear screen │
 └─────────────┘
@@ -75,9 +75,9 @@ Build this project using **ONLY visual blocks** in MakeCode - no coding required
 
 ## 🧩 **Block Locations:**
 
-### **SerialHID Blocks:**
-- `initialize serial HID system` → **SerialHID** category
-- `send HID command` → **SerialHID** category
+### **Keyboard Emu System Blocks:**
+- `initialize keyboard emu system` → **Keyboard Emu System** category
+- `send keyboard emu command` → **Keyboard Emu System** category
 
 ### **Input Blocks:**
 - `on button A pressed` → **Input** category

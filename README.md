@@ -39,7 +39,7 @@ Here's how everything works together from start to finish:
 
 ```mermaid
 graph TD
-    A[Add Serial HID Extension] --> B[Create MakeCode Program]
+    A[Add Keyboard Emu Extension] --> B[Create MakeCode Program]
     B --> C[Connect micro:bit via USB]
     C --> D[Run Python Bridge]
     D --> E[Bridge Auto-detects micro:bit]
@@ -50,7 +50,7 @@ graph TD
     I --> J[Computer responds]
 ```
 
-The beauty of this system is that steps 4-5 and 8-10 happen automatically. You just focus on creating your MakeCode program with the Serial HID extension, and the bridge handles all the technical details.
+The beauty of this system is that steps 4-5 and 8-10 happen automatically. You just focus on creating your MakeCode program with the Keyboard Emu extension, and the bridge handles all the technical details.
 
 ## Quick Start
 
@@ -58,7 +58,7 @@ The beauty of this system is that steps 4-5 and 8-10 happen automatically. You j
 1. Open [MakeCode for micro:bit](https://makecode.microbit.org)
 2. Go to **Advanced → Extensions**
 3. Import this repository URL: `https://github.com/[your-username]/keyboard-emu-bbc-microbit`
-4. Use the "serialHID", "Keyboard Emu", and "Mouse Emu" blocks
+4. Use the "Keyboard Emu System", "Keyboard Emu", and "Mouse Emu" blocks
 
 ### 2. Create Basic Program
 ```javascript

@@ -42,7 +42,7 @@ namespace serialHID
      * Send a debug message (will show in MakeCode console)
      * @param message the debug message to send
      */
-    //% blockId="serial_hid_debug" block="debug %message"
+    //% blockId="keyboard_emu_debug" block="debug %message"
     //% weight=10
     export function debug(message: string): void
     {

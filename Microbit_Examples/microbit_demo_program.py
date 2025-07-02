@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sample micro:bit MakeCode Program for Serial HID Extension
+Sample micro:bit MakeCode Program for Keyboard Emu Extension
 
 This file shows example MakeCode programs translated to comments.
 Copy the MakeCode blocks into your micro:bit project.

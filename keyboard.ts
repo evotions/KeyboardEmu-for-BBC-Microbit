@@ -65,8 +65,6 @@ namespace serialKeyboard
         serialHID.sendCommand("HID:KEY:COMBO:" + combo);
     }
 
-
-
     /**
      * Validate that input is a single key
      * @param key the key to validate
@@ -134,8 +132,6 @@ namespace serialKeyboard
     {
         pressKey("ESC");
     }
-
-
 
     // === HELPER ENUMS FOR BLOCKS ===
 

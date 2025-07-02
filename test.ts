@@ -1,10 +1,10 @@
 /**
- * Tests for Keyboard Emu for BBC Microbit - Updated keyboard emulation functions
+ * Test functions for Keyboard Emu for BBC Microbit
  */
 
 // Test basic functionality
 serialHID.initialize();
-serialHID.debug("Test started");
+serialHID.debug("Keyboard Emu Test started");
 
 // Test keyboard text typing
 serialKeyboard.typeText("Hello World!");
@@ -29,4 +29,4 @@ serialMouse.move(10, 10); // Alternative API
 serialMouse.leftClick();
 serialMouse.scrollMouse(1);
 
-serialHID.debug("Test completed");
+serialHID.debug("Keyboard Emu Test completed");

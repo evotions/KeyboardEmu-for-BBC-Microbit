@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Demo test script for micro:bit Serial HID Bridge
+Demo test script for micro:bit Keyboard Emu Bridge
 This simulates micro:bit commands to test the HID functionality without hardware.
 """
 
