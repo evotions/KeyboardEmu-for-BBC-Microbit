@@ -14,10 +14,10 @@ namespace serialHID
     let initialized = false;
 
     /**
-     * Initialize the Keyboard Emu system
+     * Initialize the Keyboard Emu
      * Call this once at the start of your program
      */
-    //% block="initialize keyboard emu system"
+    //% block="initialize keyboard emu"
     //% weight=100
     export function initialize(): void
     {
