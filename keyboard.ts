@@ -211,7 +211,7 @@ namespace serialKeyboard
     //% weight=75
     export function specialKey(key: SpecialKey): string
     {
-        return key.toString();
+        return key;
     }
 
     /**
@@ -222,6 +222,6 @@ namespace serialKeyboard
     //% weight=70
     export function modifier(key: ModifierKey): string
     {
-        return key.toString() + "+";
+        return key + "+";
     }
 } 
