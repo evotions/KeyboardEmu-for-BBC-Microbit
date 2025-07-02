@@ -4,23 +4,20 @@ Transform your micro:bit into a keyboard and mouse controller for your computer.
 
 ## How It Works
 
-The system connects your micro:bit's MakeCode programs to your computer's keyboard and mouse through a simple USB cable and the Python bridge.
-
 ```mermaid
 graph TD
-    A["micro:bit with Serial HID Extension"] -->|"USB Serial<br/>HID:KEY:TYPE:Hello"| B["Python HID Bridge"]
-    B -->|"Auto-detects Port"| C["USB Serial Connection"]
-    B -->|"Converts to"| D["Keyboard & Mouse Input"]
-    D --> E["Your Computer"]
+    A("micro:bit v2<br/>MakeCode Program") --> B("USB Serial Cable<br/>9600 baud")
+    B --> C("Python HID Bridge<br/>Command Parser")
+    C --> D("System Keyboard/Mouse<br/>Input Events")
     
-    F["Package Missing?"] -->|"Yes"| G["Auto-Install<br/>pyserial, pynput"]
-    G --> B
-    F -->|"No"| B
-    
-    H["Connection Lost?"] -->|"Yes"| I["Auto-Reconnect<br/>Keep Searching"]
-    I --> C
-    H -->|"No"| B
+    style A fill:#0084ff,stroke:#fff,stroke-width:2px,color:#fff
+    style B fill:#28a745,stroke:#fff,stroke-width:2px,color:#fff
+    style C fill:#ffc107,stroke:#000,stroke-width:2px,color:#000
+    style D fill:#dc3545,stroke:#fff,stroke-width:2px,color:#fff
 ```
+
+Your micro:bit sends commands like `HID:KEY:Hello` over serial. The Python bridge converts these to actual keyboard/mouse input.
+
 
 ## Smart Features
 
@@ -39,7 +36,7 @@ Here's how everything works together from start to finish:
 ```mermaid
 flowchart TD
     A["1. Add Serial HID Extension<br/>to MakeCode project"] --> B["2. Create MakeCode Program<br/>Uses serialHID.initialize()"]
-    B --> C["3. Connect micro:bit via USB<br/>Any USB port"]
+    B --> C["3. Connect micro:bit via USB<br/>Any USB port"] 
     C --> D["4. Run Python Bridge<br/>python install_and_run.py"]
     D --> E["5. Bridge Auto-detects micro:bit<br/>No setup needed"]
     E --> F["6. Upload MakeCode Program<br/>Flash to micro:bit"]
