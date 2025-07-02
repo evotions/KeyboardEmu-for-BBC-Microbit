@@ -1,7 +1,7 @@
 {
-    "name": "microbit-serial-hid",
+    "name": "keyboard-emu",
     "version": "1.0.0",
-    "description": "Serial-based HID support for micro:bit - Keyboard and Mouse over USB serial",
+    "description": "Keyboard Emu for BBC Microbit - Serial input emulation for keyboard and mouse control",
     "license": "MIT",
     "dependencies": {
         "core": "*"
@@ -25,11 +25,11 @@
     ],
     "preferredEditor": "tsprj",
     "authors": [
-        "SerialHID Extension"
+        "Keyboard Emu Extension"
     ],
     "card": {
-        "name": "Serial HID",
-        "description": "Control keyboard and mouse via USB serial connection",
+        "name": "Keyboard Emu",
+        "description": "Keyboard Emu for BBC Microbit - Control keyboard and mouse via serial",
         "imageUrl": "https://makecode.microbit.org/static/mb/projects/a4-motion.png"
     },
     "installedVersion": "workspace:*"

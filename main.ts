@@ -1,7 +1,7 @@
 /**
- * Serial HID Extension for micro:bit
+ * Keyboard Emu for BBC Microbit
  * 
- * This extension allows the micro:bit to act as a keyboard and mouse
+ * This extension allows the micro:bit to emulate keyboard and mouse input
  * via USB serial connection instead of Bluetooth.
  * 
  * Requires companion Python script running on the host computer.
@@ -14,10 +14,10 @@ namespace serialHID
     let initialized = false;
 
     /**
-     * Initialize the Serial HID system
+     * Initialize the Keyboard Emu system
      * Call this once at the start of your program
      */
-    //% block="initialize serial HID system"
+    //% block="initialize keyboard emu system"
     //% weight=100
     export function initialize(): void
     {
@@ -50,10 +50,10 @@ namespace serialHID
     }
 
     /**
-     * Send a raw HID command
-     * @param command the HID command to send
+     * Send a raw keyboard emu command
+     * @param command the command to send
      */
-    //% block="send HID command %command"
+    //% block="send keyboard emu command %command"
     //% weight=90
     export function sendCommand(command: string): void
     {
@@ -71,7 +71,7 @@ namespace serialHID
     /**
      * Send a ping to test the connection
      */
-    //% block="ping HID bridge"
+    //% block="ping keyboard emu bridge"
     //% weight=80
     export function ping(): void
     {

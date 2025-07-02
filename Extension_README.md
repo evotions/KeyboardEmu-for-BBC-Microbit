@@ -1,6 +1,6 @@
-# Serial HID Extension for micro:bit
+# Keyboard Emu for BBC Microbit
 
-This extension allows your micro:bit to act as a keyboard and mouse via USB serial connection instead of Bluetooth. This frees up the radio antenna for other purposes while providing reliable HID functionality.
+This extension allows your BBC micro:bit to emulate keyboard and mouse input via USB serial connection instead of Bluetooth. This frees up the radio antenna for other purposes while providing reliable input emulation functionality.
 
 ## Features
 
@@ -12,14 +12,14 @@ This extension allows your micro:bit to act as a keyboard and mouse via USB seri
 
 ## Requirements
 
-1. **micro:bit v2** (required for USB serial)
+1. **BBC micro:bit** (v1 or v2 supported)
 2. **Python companion script** running on host computer
 3. **USB cable** connection to computer
 
 ## Quick Start
 
 ### 1. Add the Extension
-Search for "serial-hid" in MakeCode extensions or import this repository.
+Search for "keyboard-emu" in MakeCode extensions or import this repository.
 
 ### 2. Initialize the System
 ```blocks

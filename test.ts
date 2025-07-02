@@ -1,5 +1,5 @@
 /**
- * Tests for Serial HID Extension - Updated for new keyboard functions
+ * Tests for Keyboard Emu for BBC Microbit - Updated keyboard emulation functions
  */
 
 // Test basic functionality

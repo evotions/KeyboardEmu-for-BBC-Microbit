@@ -1,6 +1,6 @@
 //% color=#0000FF 
 //% icon="\uf11c"
-//% block="SerialKeyboard"
+//% block="Keyboard Emu"
 namespace serialKeyboard
 {
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Auto-installer and runner for micro:bit HID Bridge
-This script will install dependencies and run the bridge automatically.
+Auto-installer and runner for micro:bit Keyboard Emu Bridge
+This script will install dependencies and run the keyboard emulation bridge automatically.
 """
 
 import subprocess
@@ -51,7 +51,7 @@ def check_permissions():
 
 
 def main():
-    print("🎮 micro:bit Serial HID Bridge Setup")
+    print("🎮 micro:bit Keyboard Emu Bridge Setup")
     print("=" * 40)
     
     # Check Python version
@@ -73,7 +73,7 @@ def main():
     # Show platform-specific info
     check_permissions()
     
-    print("\n🚀 Starting micro:bit HID Bridge...")
+    print("\n🚀 Starting micro:bit Keyboard Emu Bridge...")
     
     # Import and run the main bridge
     try:

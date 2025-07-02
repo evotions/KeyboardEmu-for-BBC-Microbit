@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-micro:bit Serial HID Bridge
-Cross-platform Python script to convert serial commands from micro:bit into keyboard/mouse input.
+micro:bit Keyboard Emu Bridge
+Cross-platform Python script to convert serial commands from BBC micro:bit into keyboard/mouse input emulation.
 
 Features:
     - Auto-installs required packages (pyserial, pynput) if missing
@@ -78,8 +78,8 @@ except ImportError:
         sys.exit(1)
 
 
-class MicrobitHIDBridge:
-    """Bridge between micro:bit serial commands and system HID input"""
+class MicrobitKeyboardEmuBridge:
+    """Bridge between BBC micro:bit serial commands and system keyboard/mouse input emulation"""
 
     def __init__(self, port: Optional[str] = None, debug: bool = False, auto_reconnect: bool = True):
         self.port = port
@@ -412,7 +412,7 @@ class MicrobitHIDBridge:
                             print("❌ Could not connect to micro:bit. Exiting.")
                             break
                     else:
-                        print("🎮 micro:bit HID Bridge active! Use Ctrl+C to quit.")
+                        print("🎮 micro:bit Keyboard Emu Bridge active! Use Ctrl+C to quit.")
                 
                 # Process serial data
                 try:
@@ -470,7 +470,7 @@ class MicrobitHIDBridge:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="micro:bit Serial HID Bridge")
+    parser = argparse.ArgumentParser(description="micro:bit Keyboard Emu Bridge")
     parser.add_argument("--port", help="Serial port (auto-detected if not specified)")
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     parser.add_argument("--no-reconnect", action="store_true", help="Disable auto-reconnection on disconnect")
@@ -485,7 +485,7 @@ def main():
             print(f"  {port.device} - {port.description}")
         return
     
-    bridge = MicrobitHIDBridge(
+    bridge = MicrobitKeyboardEmuBridge(
         port=args.port, 
         debug=args.debug, 
         auto_reconnect=not args.no_reconnect

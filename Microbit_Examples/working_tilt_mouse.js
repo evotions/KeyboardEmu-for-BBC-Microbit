@@ -1,7 +1,7 @@
-// Working Tilt Mouse - Updated for new keyboard protocol
+// Working Tilt Mouse - Keyboard Emu for BBC Microbit
 // Paste this into MakeCode JavaScript tab
 
-// Initialize HID system
+// Initialize Keyboard Emu system
 serialHID.initialize()
 basic.showString("READY")
 

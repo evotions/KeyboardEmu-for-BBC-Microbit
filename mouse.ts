@@ -1,6 +1,6 @@
 //% color=#8000FF 
 //% icon="\uf245"
-//% block="SerialMouse"
+//% block="Mouse Emu"
 namespace serialMouse
 {
 

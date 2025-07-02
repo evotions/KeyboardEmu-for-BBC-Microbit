@@ -1,10 +1,10 @@
 # MakeCode Examples
 
-This folder contains example programs demonstrating the micro:bit HID extension.
+This folder contains example programs demonstrating the Keyboard Emu for BBC Microbit extension.
 
 ## 🎮 Tilt Mouse Control (`tilt_mouse_control.js`)
 
-Turn your micro:bit into a **motion-controlled mouse**! Tilt to move the cursor, buttons to click.
+Turn your BBC micro:bit into a **motion-controlled mouse**! Tilt to move the cursor, buttons to click.
 
 ### Features:
 - **Tilt forward/back** → Move cursor up/down
@@ -18,7 +18,7 @@ Turn your micro:bit into a **motion-controlled mouse**! Tilt to move the cursor,
 - **Button B** → Right click
 - **A + B together** → Middle click
 - **Shake gesture** → Double click
-- **Touch logo** → Toggle scroll mode (micro:bit v2 only)
+- **Touch logo** → Toggle scroll mode (BBC micro:bit v2 only)
 
 ### How to Use:
 
@@ -30,17 +30,17 @@ Turn your micro:bit into a **motion-controlled mouse**! Tilt to move the cursor,
    - Copy all the code into a new MakeCode project
    
 3. **Download to micro:bit**:
-   - Flash the program to your micro:bit
+   - Flash the program to your BBC micro:bit
    - **IMPORTANT**: Close all MakeCode browser tabs or click "Disconnect"
    
-4. **Run the Python bridge**:
+4. **Run the Python Keyboard Emu bridge**:
    ```bash
    cd Python_HID_Bridge
    python microbit_hid_bridge.py --debug
    ```
    
 5. **Start moving**:
-   - Hold your micro:bit flat
+   - Hold your BBC micro:bit flat
    - Tilt it like a joystick to control the mouse cursor
    - Press buttons to click!
 
@@ -56,7 +56,7 @@ let smoothing = 0.6     // Movement smoothing (0.1 = smooth, 0.9 = fast)
 
 ### Troubleshooting:
 
-- **No cursor movement**: Make sure MakeCode is disconnected from the micro:bit
+- **No cursor movement**: Make sure MakeCode is disconnected from the BBC micro:bit
 - **Jittery movement**: Increase the `deadzone` value
 - **Too slow/fast**: Adjust the `sensitivity` value
 - **Jerky movement**: Increase the `smoothing` value (closer to 1.0)
@@ -71,8 +71,8 @@ let smoothing = 0.6     // Movement smoothing (0.1 = smooth, 0.9 = fast)
 2. **Switch to JavaScript tab**
 3. **Delete all existing code**
 4. **Copy and paste** the entire contents of `paste_tilt_mouse.js`
-5. **Download to micro:bit** and **close MakeCode tabs**
-6. **Run Python bridge** and enjoy!
+5. **Download to BBC micro:bit** and **close MakeCode tabs**
+6. **Run Python Keyboard Emu bridge** and enjoy!
 
 ### 🎮 Controls:
 - **Tilt** = Move mouse cursor
@@ -95,4 +95,4 @@ let threshold = 150  // Sensitivity (50-300)
 - Gaming controller
 - Air mouse with gestures
 
-Check back for more creative uses of the HID extension! 
+Check back for more creative uses of the Keyboard Emu extension! 

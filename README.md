@@ -1,13 +1,13 @@
-# micro:bit Serial HID Extension
+# Keyboard Emu for BBC Microbit
 
-Transform your micro:bit into a keyboard and mouse controller for your computer. This complete project includes both the MakeCode extension and Python bridge that automatically handles the connection between your micro:bit and your computer's input system.
+Transform your BBC micro:bit into a keyboard and mouse input emulator for your computer. This complete project includes both the MakeCode extension and Python bridge that automatically handles the connection between your micro:bit and your computer's input system.
 
 ## How It Works
 
 ```mermaid
 graph TD
-    A("micro:bit v2<br/>MakeCode Program") --> B("USB Serial Cable<br/>9600 baud")
-    B --> C("Python HID Bridge<br/>Command Parser")
+    A("BBC micro:bit<br/>MakeCode Program") --> B("USB Serial Cable<br/>9600 baud")
+    B --> C("Python Keyboard Emu Bridge<br/>Command Parser")
     C --> D("System Keyboard/Mouse<br/>Input Events")
     
     style A fill:#0084ff,stroke:#fff,stroke-width:2px,color:#fff
@@ -16,7 +16,7 @@ graph TD
     style D fill:#dc3545,stroke:#fff,stroke-width:2px,color:#fff
 ```
 
-Your micro:bit sends commands like `HID:KEY:Hello` over serial. The Python bridge converts these to actual keyboard/mouse input.
+Your BBC micro:bit sends commands like `HID:KEY:Hello` over serial. The Python Keyboard Emu bridge converts these to actual keyboard/mouse input.
 
 
 ## Smart Features
@@ -53,8 +53,8 @@ The beauty of this system is that steps 4-5 and 8-10 happen automatically. You j
 ### 1. Add Extension to MakeCode
 1. Open [MakeCode for micro:bit](https://makecode.microbit.org)
 2. Go to **Advanced → Extensions**
-3. Import this repository URL: `https://github.com/[your-username]/MBV2_KeyboardHID`
-4. Use the "SerialHID", "SerialKeyboard", and "SerialMouse" blocks
+3. Import this repository URL: `https://github.com/[your-username]/keyboard-emu-bbc-microbit`
+4. Use the "serialHID", "Keyboard Emu", and "Mouse Emu" blocks
 
 ### 2. Create Basic Program
 ```javascript
@@ -97,9 +97,9 @@ python microbit_hid_bridge.py
 
 **Python 3.6 or newer** is required. Most modern systems have this already installed.
 
-**micro:bit v2** connected via USB cable. Version 1 micro:bits also work but v2 is recommended for better performance.
+**BBC micro:bit** (v1 or v2) connected via USB cable. Both versions work, but v2 is recommended for better performance.
 
-**Serial HID MakeCode Extension** must be added to your MakeCode project. Search for this repository URL in MakeCode extensions.
+**Keyboard Emu MakeCode Extension** must be added to your MakeCode project. Search for this repository URL in MakeCode extensions.
 
 **Administrator privileges** are needed for the script to control keyboard and mouse input. On Windows run Command Prompt as Administrator, on macOS grant Accessibility permissions in System Preferences, and on Linux add your user to the dialout group.
 
@@ -117,7 +117,7 @@ Then log out and back in for the changes to take effect.
 
 ## MakeCode Extension Usage
 
-Add the Serial HID extension to your MakeCode project, then use these namespaces:
+Add the Keyboard Emu extension to your MakeCode project, then use these namespaces:
 
 **serialHID.initialize()** must be called once at the start of your program to set up the serial communication.
 
@@ -174,11 +174,11 @@ python microbit_hid_bridge.py --list-ports
 ## Project Structure
 
 ```
-MBV2_KeyboardHID/
+keyboard-emu-bbc-microbit/
 ├── pxt.json, *.ts              # MakeCode extension files
 ├── Python_HID_Bridge/          # Python companion app with auto-installer
 │   ├── install_and_run.py      # Auto-installer and runner
-│   ├── microbit_hid_bridge.py  # Main bridge application
+│   ├── microbit_hid_bridge.py  # Main keyboard emu bridge application
 │   └── requirements.txt        # Python dependencies
 ├── Microbit_Examples/          # Working example programs
 │   ├── tilt_mouse_control.js   # Motion-controlled mouse
@@ -199,7 +199,7 @@ Check the `Microbit_Examples/README.md` for complete instructions and code for t
 
 ## Troubleshooting Common Issues
 
-**"Could not find micro:bit"** usually means either the micro:bit isn't connected, or the USB cable only provides power without data connection. Try a different USB cable or port. You can also run `--list-ports` to see what devices are available.
+**"Could not find BBC micro:bit"** usually means either the micro:bit isn't connected, or the USB cable only provides power without data connection. Try a different USB cable or port. You can also run `--list-ports` to see what devices are available.
 
 **Permission denied errors** happen when the script can't access input control. On Windows, run as Administrator. On macOS, grant Accessibility permissions. On Linux, ensure you're in the dialout group.
 
@@ -207,7 +207,7 @@ Check the `Microbit_Examples/README.md` for complete instructions and code for t
 
 **Package installation fails** can occur in restricted environments. The bridge will show specific error messages and fall back to manual installation instructions.
 
-**Serial port conflicts** happen when another program is using the micro:bit's serial connection. Most commonly this is MakeCode's console or simulator still connected via WebUSB. **Always close all MakeCode browser tabs after flashing your program** to release the serial connection.
+**Serial port conflicts** happen when another program is using the BBC micro:bit's serial connection. Most commonly this is MakeCode's console or simulator still connected via WebUSB. **Always close all MakeCode browser tabs after flashing your program** to release the serial connection.
 
 **Commands are ignored** usually means MakeCode is still connected via WebUSB. Click "Disconnect" in MakeCode or close all browser tabs with MakeCode open.
 
@@ -242,7 +242,7 @@ The automatic reconnection feature can be disabled for applications that need to
 
 ## Credits
 
-This project was inspired by the excellent [micro:bit Bluetooth HID extension](https://github.com/bsiever/microbit-pxt-blehid) by Bill Siever. Our serial-based approach provides an alternative that frees up the radio antenna for other uses.
+This project was inspired by the excellent [micro:bit Bluetooth HID extension](https://github.com/bsiever/microbit-pxt-blehid) by Bill Siever. Our serial-based keyboard emulation approach provides an alternative that frees up the radio antenna for other uses.
 
 ## License
 
